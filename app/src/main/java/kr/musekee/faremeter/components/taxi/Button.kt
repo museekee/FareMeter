@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import kr.musekee.faremeter.R
 
 @Composable
-fun TaxiButton(color: TaxiButtonColor) {
+fun TaxiButton(color: TaxiButtonColor, label: String) {
     Button(
         contentPadding = PaddingValues(),
         modifier = Modifier
@@ -66,7 +66,7 @@ fun TaxiButton(color: TaxiButtonColor) {
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Black,
                 textAlign = TextAlign.Center,
-                text = "출발"
+                text = label
             )
         }
     }
