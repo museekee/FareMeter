@@ -1,19 +1,15 @@
 package kr.musekee.faremeter.components.taxi
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -74,26 +70,6 @@ fun TaxiButton(color: TaxiButtonColor) {
             )
         }
     }
-//    Button(
-//        onClick = { /* TODO */ },
-//        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-//        modifier = Modifier
-//            .size(100.dp, 50.dp)
-//    ) {
-//        Box(
-//            modifier = Modifier
-//                .background(Color.Transparent)
-//        ) {
-//            Icon(
-//                painter = painterResource(id = R.drawable.taxi_button),
-//                contentDescription = null,
-//                tint = Color(0xFF00FF00)
-//            )
-//            Text(
-//                text = "하이"
-//            )
-//        }
-//    }
 }
 
 enum class TaxiButtonColor(val color: Long) {
