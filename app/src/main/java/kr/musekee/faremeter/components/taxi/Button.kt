@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import kr.musekee.faremeter.R
 
 @Composable
-fun TaxiButton(color: TaxiButtonColor, label: String) {
+fun TaxiButton(color: TaxiButtonColor, label: String, onClick: () -> Unit) {
     Button(
         contentPadding = PaddingValues(),
         modifier = Modifier
@@ -41,7 +41,7 @@ fun TaxiButton(color: TaxiButtonColor, label: String) {
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent
         ),
-        onClick = { /*TODO*/ }
+        onClick = onClick
     ) {
         BoxWithConstraints(
             modifier = Modifier

@@ -14,7 +14,7 @@ import kotlin.math.roundToLong
 
 @Composable
 fun TaxiHorse(speed: Double) {
-    var imgIdx by remember { mutableIntStateOf(0) }
+    var imgIdx by remember { mutableIntStateOf(1) }
     val imgs = listOf(
         R.drawable.taxi_horse0,
         R.drawable.taxi_horse1,

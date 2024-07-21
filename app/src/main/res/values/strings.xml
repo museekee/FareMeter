@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">FareMeter</string>
+    <string name="app_name">미터기</string>
+    <string name="SelectTransportation">교통수단</string>
+    <string name="Settings">설정</string>
+    <string name="Taxi">택시</string>
+    <string name="Bus">버스</string>
 </resources>
