@@ -2,7 +2,10 @@ package kr.musekee.faremeter.libs
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.preference.PreferenceManager
 import kr.musekee.faremeter.datas.TaxiData
 import java.text.SimpleDateFormat
@@ -27,11 +30,11 @@ object MeterUtil {
     private var sectionFare: List<Int> = listOf()
     private var sectionDistance: List<Int> = listOf()
 
-    var fare = 0
+    val fare: MutableState<Int> = mutableIntStateOf(0)
 
-    var counter = 0
-    var distance = 0.0 // m
-    var speed = 0.0f // m/s
+    val counter: MutableState<Int> = mutableIntStateOf(0)
+    val distance: MutableState<Double> = mutableDoubleStateOf(0.0) // m
+    val speed: MutableState<Float> = mutableFloatStateOf(0.0f) // m/s
 
     var isNight = false
     var isIntercity = false
@@ -63,10 +66,10 @@ object MeterUtil {
     }
 
     fun resetValues() {
-        fare = minFare
-        counter = minDistance
-        distance = 0.0
-        speed = 0.0f
+        fare.value = minFare
+        counter.value = minDistance
+        distance.value = 0.0
+        speed.value = 0.0f
 
         isNight = false
         isIntercity = false
@@ -81,46 +84,46 @@ object MeterUtil {
         val deltaTime = (curTime - lastUpdateTime).toInt() / 1000f
         lastUpdateTime = curTime
 
-        speed = curSpeed
+        speed.value = curSpeed
 
-        val curDistance = speed * deltaTime
-        distance += curDistance
+        val curDistance = speed.value * deltaTime
+        distance.value += curDistance
 
-        counter -= if (speed <= 4.2 && transportation == "taxi") { // 약 15km/h보다 느릴 때 (시간 요금), 택시일 때
+        counter.value -= if (speed.value <= 4.2 && transportation == "taxi") { // 약 15km/h보다 느릴 때 (시간 요금), 택시일 때
             (runDistance / timeTime * deltaTime).toInt()
         } else {
             curDistance.toInt()
         }
 
-        if (counter <= 0) {
+        if (counter.value <= 0) {
             val nowHour = SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().time).toInt()
             val nightIndex = nightTime.indexOfFirst { it.any { inner -> inner == nowHour } }
             val nightFare = if (isNight) nightRate[nightIndex] * runFare.toDouble() else 0.0
             val intercityFare = if (isIntercity) intercityRate * runFare.toDouble() else 0.0
-            fare += runFare + nightFare.toInt() + intercityFare.toInt()
+            fare.value += runFare + nightFare.toInt() + intercityFare.toInt()
+            counter.value = runDistance
         }
 
-        speed = curSpeed
+        speed.value = curSpeed
     }
 
     fun toggleNight(enabled: Boolean) {
         isNight = enabled
         val nowHour = SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().time).toInt()
-        Log.d("MeterUtil", nowHour.toString())
         val nightIndex = nightTime.indexOfFirst { it.any { inner -> inner == nowHour } }
-        val nightFare = (nightRate[nightIndex] * minFare.toDouble()).toInt()
+        val nightFare = if (nightIndex == -1) 0 else (nightRate[nightIndex] * minFare.toDouble()).toInt()
         if (enabled)
-            fare += nightFare
+            fare.value += nightFare
         else
-            fare -= nightFare
+            fare.value -= nightFare
     }
 
     fun toggleIntercity(enabled: Boolean) {
         isIntercity = enabled
         val intercityFare = (intercityRate * minFare.toDouble()).toInt()
         if (enabled)
-            fare += intercityFare
+            fare.value += intercityFare
         else
-            fare -= intercityFare
+            fare.value -= intercityFare
     }
 }

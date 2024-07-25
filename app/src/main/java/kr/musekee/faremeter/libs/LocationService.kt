@@ -7,38 +7,41 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.location.Location
 import android.location.LocationManager
-import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.location.LocationListenerCompat
+import androidx.preference.PreferenceManager
 import kr.musekee.faremeter.MainActivity
 import kr.musekee.faremeter.NOTI_CHANNEL
 import kr.musekee.faremeter.R
 import kr.musekee.faremeter.activities.TaxiActivity
-import kr.musekee.faremeter.datas.TaxiData
 
 
 class LocationService : Service(), LocationListenerCompat {
     private lateinit var notification: Notification
     private val mNotificationId = 1
     private lateinit var locationManager: LocationManager
+    private lateinit var pref: SharedPreferences
+    private var transportation = "taxi"
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!PermissionUtil.checkLocationPermission(this)) {
             PermissionUtil.openAppInfo(this)
             stopSelf()
         }
+        pref = PreferenceManager.getDefaultSharedPreferences(this)
+        transportation = pref.getString("pref_transportation", "taxi") ?: "taxi"
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             MIN_TIME_BW_UPDATES,
-            MIN_DISTANCE_CHANGE_UPDATES.toFloat(),
+            MIN_DISTANCE_CHANGE_UPDATES,
             this
         )
         notiGosu(true)
@@ -60,7 +63,7 @@ class LocationService : Service(), LocationListenerCompat {
     }
 
     private fun notiGosu(isFirst: Boolean) {
-        val notiIntent = if ("taxi" == "taxi") {
+        val notiIntent = if (transportation == "taxi") {
             Intent(this, TaxiActivity::class.java)
         }
         else Intent(this, MainActivity::class.java)
@@ -77,7 +80,7 @@ class LocationService : Service(), LocationListenerCompat {
 
         val notiBuilder = NotificationCompat.Builder(this, NOTI_CHANNEL)
             .setContentTitle("대중교통 미터기 실행중")
-            .setContentText("운임: ${MeterUtil.fare}원 | 주행 거리: ${(MeterUtil.distance / 100).toInt() / 10}km | 속도: ${((MeterUtil.speed * 3.6f) * 10f).toInt() / 10f} km/h")
+            .setContentText("운임: ${MeterUtil.fare.value}원 | 주행 거리: ${(MeterUtil.distance.value / 100).toInt() / 10}km | 속도: ${((MeterUtil.speed.value * 3.6f) * 10f).toInt() / 10f} km/h")
             .setSmallIcon(R.drawable.ic_bus)
             .setContentIntent(pendingIntent)
         notification = notiBuilder.build()
@@ -112,7 +115,7 @@ class LocationService : Service(), LocationListenerCompat {
     }
 
     companion object {
-        private const val MIN_DISTANCE_CHANGE_UPDATES: Long = 1
-        private const val MIN_TIME_BW_UPDATES: Long = 10 // 1000ms = 1sec
+        private const val MIN_TIME_BW_UPDATES: Long = 300 // 1000ms = 1sec
+        private const val MIN_DISTANCE_CHANGE_UPDATES: Float = 0f
     }
 }
