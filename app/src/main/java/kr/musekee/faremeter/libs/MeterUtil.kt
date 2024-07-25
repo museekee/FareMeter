@@ -1,9 +1,5 @@
 package kr.musekee.faremeter.libs
 
-object MeterUtil {
-    var totalSpeed = 0
+class MeterUtil {
 
-    fun addSpeed(speed: Int) {
-        totalSpeed += speed
-    }
 }

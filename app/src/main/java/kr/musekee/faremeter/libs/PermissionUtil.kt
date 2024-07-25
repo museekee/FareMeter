@@ -9,7 +9,7 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 
-object PermissionL {
+object PermissionUtil {
     fun openAppInfo(context: Context) {
         Toast.makeText(
             context,

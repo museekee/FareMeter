@@ -39,6 +39,7 @@ import kr.musekee.faremeter.R
 import kr.musekee.faremeter.components.taxi.TaxiButton
 import kr.musekee.faremeter.components.taxi.TaxiButtonColor
 import kr.musekee.faremeter.components.taxi.TaxiHorse
+import kr.musekee.faremeter.libs.LocationService
 import kr.musekee.faremeter.libs.SetLandscape
 
 @Composable
@@ -47,8 +48,6 @@ fun Taxi(context: Context) {
     var speed by remember { mutableIntStateOf(0) }
     var useIntercity by remember { mutableStateOf(false) }
     var useNight by remember { mutableStateOf(false) }
-//
-//    LocalContext.current.startService(Intent(LocalContext.current, MeterService::class.java))
 
     Column(
         modifier = Modifier
