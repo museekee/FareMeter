@@ -1,5 +1,8 @@
 package kr.musekee.faremeter.screens
 
+import android.content.Context
+import android.content.Intent
+import android.location.LocationManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kr.musekee.faremeter.MainActivity
 import kr.musekee.faremeter.R
 import kr.musekee.faremeter.components.taxi.TaxiButton
 import kr.musekee.faremeter.components.taxi.TaxiButtonColor
@@ -38,11 +42,14 @@ import kr.musekee.faremeter.components.taxi.TaxiHorse
 import kr.musekee.faremeter.libs.SetLandscape
 
 @Composable
-fun Taxi() {
+fun Taxi(context: Context) {
     SetLandscape(LocalContext.current)
     var speed by remember { mutableIntStateOf(0) }
     var useIntercity by remember { mutableStateOf(false) }
     var useNight by remember { mutableStateOf(false) }
+//
+//    LocalContext.current.startService(Intent(LocalContext.current, MeterService::class.java))
+
     Column(
         modifier = Modifier
             .fillMaxSize()
