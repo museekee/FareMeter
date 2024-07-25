@@ -24,10 +24,10 @@ object TaxiData {
         nightTime = listOf(listOf(23, 0, 1, 2, 3))
     )
     fun getDataByName(name: String): StandardTransportation {
-        return if (name == "seoul")
-            seoul
-        else if (name == "gyeonggi")
-            gyeonggi
-        else gyeonggi
+        return when (name) {
+            "seoul" -> seoul
+            "gyeonggi" -> gyeonggi
+            else -> gyeonggi
+        }
     }
 }

@@ -1,6 +1,5 @@
 package kr.musekee.faremeter.screens
 
-import android.app.Activity
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,11 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kr.musekee.faremeter.MainActivity
 import kr.musekee.faremeter.R
 import kr.musekee.faremeter.activities.TaxiActivity
 import kr.musekee.faremeter.components.main.MainButton
-import kr.musekee.faremeter.libs.SetLandscape
 import kr.musekee.faremeter.libs.SetPortrait
 
 @Composable
@@ -47,7 +44,7 @@ fun SelectTransportation() {
             MainButton(
                 label = stringResource(id = R.string.Taxi),
                 icon = R.drawable.ic_taxi,
-                color = Color.Yellow,
+                color = Color(0xFFFFDE4D),
                 onClick = {
                     context.startActivity(Intent(context, TaxiActivity::class.java))
                 }

@@ -3,6 +3,7 @@ package kr.musekee.faremeter.components.main
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
@@ -22,7 +23,8 @@ fun MainButton(label: String, icon: Int, color: Color, onClick: () -> Unit) {
     Button(
         modifier = Modifier
             .size(150.dp)
-            .background(color, CircleShape),
+            .background(color, CircleShape)
+            .padding(vertical = 5.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent
         ),
@@ -30,6 +32,9 @@ fun MainButton(label: String, icon: Int, color: Color, onClick: () -> Unit) {
     ) {
         Column {
             Icon(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
                 painter = painterResource(
                     id = icon
                 ),
