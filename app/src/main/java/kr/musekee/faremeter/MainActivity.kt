@@ -25,16 +25,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
+//            val navBackStackEntry by navController.currentBackStackEntryAsState()
 
             FareMeterTheme {
                 Scaffold(
                     topBar = {},
                     bottomBar = {
-                        if (
-                            navBackStackEntry?.destination?.route == SETTINGS ||
-                            navBackStackEntry?.destination?.route == SELECT_TRANSPORTATION
-                        ) BottomNavigation(navController = navController)
+//                        if (
+//                            navBackStackEntry?.destination?.route == SETTINGS ||
+//                            navBackStackEntry?.destination?.route == SELECT_TRANSPORTATION
+//                        )
+                        BottomNavigation(navController = navController)
                     }
                 ) {
                     Box(modifier = Modifier.padding(it)){

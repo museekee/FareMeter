@@ -18,11 +18,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FareMeter"
         tools:targetApi="34">
+        <activity
+            android:name=".activities.TaxiActivity"
+            android:exported="false"
+            android:label="@string/title_activity_taxi"
+            android:theme="@style/Theme.FareMeter" />
+
         <service
             android:name=".libs.LocationService"
-            android:foregroundServiceType="location"
-            android:exported="false">
-        </service>
+            android:exported="false"
+            android:foregroundServiceType="location"></service>
 
         <activity
             android:name=".MainActivity"

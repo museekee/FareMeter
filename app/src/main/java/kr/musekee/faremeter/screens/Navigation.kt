@@ -85,13 +85,7 @@ fun NavigationHost(navController: NavHostController) {
             Settings()
         }
         composable(BottomNavItem.SelectTransportation.screenRoute) {
-            SelectTransportation(navController)
-        }
-        composable(TransportationItem.Taxi.screenRoute) {
-            Taxi(LocalContext.current)
-        }
-        composable(TransportationItem.Bus.screenRoute) {
-            Bus()
+            SelectTransportation()
         }
     }
 }

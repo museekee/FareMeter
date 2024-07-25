@@ -19,14 +19,13 @@ import androidx.core.location.LocationListenerCompat
 import kr.musekee.faremeter.MainActivity
 import kr.musekee.faremeter.NOTI_CHANNEL
 import kr.musekee.faremeter.R
+import kr.musekee.faremeter.activities.TaxiActivity
+import kr.musekee.faremeter.datas.TaxiData
 
 
 class LocationService : Service(), LocationListenerCompat {
-    private var speed = 0.0f
-
     private lateinit var notification: Notification
     private val mNotificationId = 1
-
     private lateinit var locationManager: LocationManager
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -47,12 +46,12 @@ class LocationService : Service(), LocationListenerCompat {
     }
     override fun onDestroy() {
         super.onDestroy()
-//        MeterUtil.resetValues()
+        MeterUtil.resetValues()
         locationManager.removeUpdates(this)
         stopForeground(STOP_FOREGROUND_REMOVE)
     }
     override fun onLocationChanged(location: Location) {
-        speed = location.speed
+        MeterUtil.increaseFare(location.speed)
         notiGosu(false)
     }
 
@@ -61,7 +60,10 @@ class LocationService : Service(), LocationListenerCompat {
     }
 
     private fun notiGosu(isFirst: Boolean) {
-        val notiIntent = Intent(this, MainActivity::class.java)
+        val notiIntent = if ("taxi" == "taxi") {
+            Intent(this, TaxiActivity::class.java)
+        }
+        else Intent(this, MainActivity::class.java)
         notiIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK and Intent.FLAG_ACTIVITY_CLEAR_TASK
 
         createNotificationChannel()
@@ -75,7 +77,7 @@ class LocationService : Service(), LocationListenerCompat {
 
         val notiBuilder = NotificationCompat.Builder(this, NOTI_CHANNEL)
             .setContentTitle("대중교통 미터기 실행중")
-            .setContentText("운임: 4800원 | 주행 거리: 405.1km | 속도: 0.0 km/h")
+            .setContentText("운임: ${MeterUtil.fare}원 | 주행 거리: ${(MeterUtil.distance / 100).toInt() / 10}km | 속도: ${((MeterUtil.speed * 3.6f) * 10f).toInt() / 10f} km/h")
             .setSmallIcon(R.drawable.ic_bus)
             .setContentIntent(pendingIntent)
         notification = notiBuilder.build()
