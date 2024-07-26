@@ -9,7 +9,7 @@ package kr.musekee.faremeter.datas
 data class StandardTransportation(
     val minFare: Int, // 기본 요금
     val minDistance: Int, // 기본 요금 거리
-    val runFare: Int, // 거리 요금
+    val runFare: Double, // 거리 요금
     val runDistance: Int, // 거리 요금 거리
     val timeFare: Int, // 시간 요금
     val timeTime: Int, // 시간 요금 시간

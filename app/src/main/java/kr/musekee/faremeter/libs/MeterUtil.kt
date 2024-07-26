@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.preference.PreferenceManager
+import kr.musekee.faremeter.datas.KTXData
 import kr.musekee.faremeter.datas.TaxiData
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -19,7 +20,7 @@ object MeterUtil {
     private var transportation = "taxi"
     private var minFare = 0
     private var minDistance = 0
-    private var runFare = 0
+    private var runFare = 0.0
     private var runDistance = 0
     private var timeFare = 0
     private var timeTime = 0
@@ -41,13 +42,14 @@ object MeterUtil {
 
     fun init(context: Context) {
         pref = PreferenceManager.getDefaultSharedPreferences(context)
-        val locationPrefs = pref.getString("pref_location", "seoul")
+        val locationPrefs = pref.getString("pref_location", null)
         val transportationPrefs = pref.getString("pref_transportation", "taxi")
 
-        val standardTransportation = if (transportationPrefs == "taxi")
-            TaxiData.getDataByName(locationPrefs ?: "seoul")
-        else
-            TaxiData.getDataByName(locationPrefs ?: "seoul")
+        val standardTransportation = when (transportationPrefs) {
+            "taxi" -> TaxiData.getDataByName(locationPrefs)
+            "KTX" -> KTXData.getDataByName(locationPrefs)
+            else -> TaxiData.getDataByName(locationPrefs)
+        }
         transportation = transportationPrefs ?: "taxi"
         minFare = standardTransportation.minFare
         minDistance = standardTransportation.minDistance
@@ -98,9 +100,9 @@ object MeterUtil {
         if (counter.value <= 0) {
             val nowHour = SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().time).toInt()
             val nightIndex = nightTime.indexOfFirst { it.any { inner -> inner == nowHour } }
-            val nightFare = if (isNight) nightRate[nightIndex] * runFare.toDouble() else 0.0
-            val intercityFare = if (isIntercity) intercityRate * runFare.toDouble() else 0.0
-            fare.value += runFare + nightFare.toInt() + intercityFare.toInt()
+            val nightFare = if (isNight) nightRate[nightIndex] * runFare else 0.0
+            val intercityFare = if (isIntercity) intercityRate * runFare else 0.0
+            fare.value += (runFare + nightFare + intercityFare).toInt()
             counter.value = runDistance
         }
 
