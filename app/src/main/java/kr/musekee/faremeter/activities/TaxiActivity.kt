@@ -40,6 +40,7 @@ import kr.musekee.faremeter.components.taxi.TaxiHorse
 import kr.musekee.faremeter.libs.LocationService
 import kr.musekee.faremeter.libs.MeterUtil
 import kr.musekee.faremeter.libs.SetLandscape
+import kr.musekee.faremeter.transportationCalc.TaxiCalc
 
 class TaxiActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +89,7 @@ class TaxiActivity : ComponentActivity() {
                             label = "시외 할증",
                             onClick = {
                                 useIntercity = !useIntercity
-                                MeterUtil.toggleIntercity(useIntercity)
+                                TaxiCalc.toggleIntercity(useIntercity)
                             }
                         )
                         TaxiButton(
@@ -96,7 +97,7 @@ class TaxiActivity : ComponentActivity() {
                             label = "야간 할증",
                             onClick = {
                                 useNight = !useNight
-                                MeterUtil.toggleNight(useNight)
+                                TaxiCalc.toggleNight(useNight)
                             }
                         )
 
@@ -109,7 +110,7 @@ class TaxiActivity : ComponentActivity() {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         TaxiHorse(
-                            speed = MeterUtil.speed.value.toDouble()
+                            speed = TaxiCalc.speed.value.toDouble()
                         )
                         Spacer(Modifier.weight(1f))
                         Column {
@@ -117,19 +118,19 @@ class TaxiActivity : ComponentActivity() {
                                 fontSize = 35.sp,
                                 fontWeight = FontWeight.Black,
                                 color = Color(0xFF0055FF),
-                                text = "${MeterUtil.counter.value}m"
+                                text = "${TaxiCalc.counter.value}m"
                             )
                             Text(
                                 fontSize = 80.sp,
                                 fontWeight = FontWeight.Black,
                                 color = Color.White,
-                                text = "${MeterUtil.fare.value}원"
+                                text = "${TaxiCalc.fare.value}원"
                             )
                             Text(
                                 fontSize = 45.sp,
                                 fontWeight = FontWeight.Black,
                                 color = Color(0xFF27E43A),
-                                text = "${((MeterUtil.speed.value * 3.6f) * 10f).toInt() / 10f} km/h",
+                                text = "${((TaxiCalc.speed.value * 3.6f) * 10f).toInt() / 10f} km/h",
                                 textAlign = TextAlign.Right
                             )
                         }
@@ -154,7 +155,7 @@ class TaxiActivity : ComponentActivity() {
                             fontWeight = FontWeight.Black,
                             fontSize = 20.sp,
                             color = Color.White,
-                            text = "주행 거리: ${(MeterUtil.distance.value / 100).toInt() / 10}km"
+                            text = "주행 거리: ${(TaxiCalc.distance.value / 100).toInt() / 10}km"
                         )
                         Text(
                             modifier = Modifier

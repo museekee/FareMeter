@@ -3,7 +3,7 @@ package kr.musekee.faremeter.datas
 object TaxiData {
     val seoul = TaxiTransportation(
         minFare = 4800,
-        minDistance = 1600,
+        minDistance = 50,
         runFare = 100.0,
         runDistance = 131,
         timeFare = 100,
@@ -24,11 +24,11 @@ object TaxiData {
         nightTime = listOf(listOf(23, 0, 1, 2, 3))
     )
     val names = listOf("서울특별시", "경기도")
-    fun getDataByName(name: String?): StandardTransportation {
+    fun getDataByName(name: String?): TaxiTransportation {
         return when (name) {
             "서울특별시" -> seoul
             "경기도" -> gyeonggi
-            else -> gyeonggi
+            else -> seoul
         }
     }
 }

@@ -6,7 +6,8 @@ package kr.musekee.faremeter.datas
  * 시간의 단위는 분 (min)이다.
  * 그리고 모든 Rate는 소수 (0.2, 0.4)로 한다.
  */
-data class StandardTransportation(
+
+data class TaxiTransportation(
     val minFare: Int, // 기본 요금
     val minDistance: Int, // 기본 요금 거리
     val runFare: Double, // 거리 요금
@@ -16,7 +17,11 @@ data class StandardTransportation(
     val intercityRate: Double, // 시외 할증
     val nightRate: List<Double>, // 심야 할증
     val nightTime: List<List<Int>>, // 심야 할증 시간
-    val morningFare: Int, // 조조할인된 가격
-    val sectionFare: List<Int>, // 구간 요금
-    val sectionDistance: List<Int>, // 구간 거리
+)
+
+data class TrainTransportation(
+    val minFare: Int, // 기본 요금
+    val minDistance: Int, // 기본 요금 거리
+    val runFare: Double, // 거리 요금
+    val runDistance: Int, // 거리 요금 거리
 )

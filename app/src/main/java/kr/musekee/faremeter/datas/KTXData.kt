@@ -19,8 +19,8 @@ object KTXData {
         runFare = 168.24,
         runDistance = 1000
     )
-    val names = listOf("일반실", "특실", "우등실")
-    fun getDataByName(name: String?): StandardTransportation {
+    val classes = listOf("일반실", "특실", "우등실")
+    fun getDataByClass(name: String?): TrainTransportation {
         return when (name) {
             "일반실" -> economy
             "특실" -> first
