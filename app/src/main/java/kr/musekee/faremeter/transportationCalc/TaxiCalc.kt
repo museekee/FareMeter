@@ -33,6 +33,8 @@ object TaxiCalc {
     val counter: MutableState<Int> = mutableIntStateOf(0)
     val distance: MutableState<Double> = mutableDoubleStateOf(0.0) // m
     val speed: MutableState<Float> = mutableFloatStateOf(0.0f) // m/s
+    var deltaTime: MutableState<Float> = mutableFloatStateOf(0f) // ms
+    val _counter: MutableState<Int> = mutableIntStateOf(0)
 
     private var isNight = false
     private var isIntercity = false
@@ -64,6 +66,8 @@ object TaxiCalc {
         counter.value = minDistance
         distance.value = 0.0
         speed.value = 0.0f
+        deltaTime.value = 0f
+        _counter.value = minDistance
 
         isNight = false
         isIntercity = false
@@ -75,16 +79,16 @@ object TaxiCalc {
         if (lastUpdateTime == 0L)
             lastUpdateTime = curTime
 
-        val deltaTime = (curTime - lastUpdateTime).toInt() / 1000f
+        deltaTime.value = (curTime - lastUpdateTime).toInt() / 1000f
         lastUpdateTime = curTime
 
         speed.value = curSpeed
 
-        val curDistance = speed.value * deltaTime
+        val curDistance = speed.value * deltaTime.value
         distance.value += curDistance
 
         counter.value -= if (speed.value <= 4.2) { // 약 15km/h보다 느릴 때 (시간 요금), 택시일 때
-            (runDistance / timeTime * deltaTime).toInt()
+            (runDistance / timeTime * deltaTime.value).toInt()
         } else {
             curDistance.toInt()
         }
@@ -96,6 +100,7 @@ object TaxiCalc {
             val intercityFare = if (isIntercity) intercityRate * runFare else 0.0
             fare.value += (runFare + nightFare + intercityFare).toInt()
             counter.value = runDistance
+            _counter.value = runDistance
         }
 
         speed.value = curSpeed

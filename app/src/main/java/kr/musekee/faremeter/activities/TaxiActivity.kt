@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
@@ -23,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -117,12 +120,29 @@ class TaxiActivity : ComponentActivity() {
                         )
                         Spacer(Modifier.weight(1f))
                         Column {
-                            Text(
-                                fontSize = 35.sp,
-                                fontWeight = FontWeight.Black,
-                                color = Color(0xFF0055FF),
-                                text = "${TaxiCalc.counter.value}m"
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            ) {
+                                Text(
+                                    fontSize = 35.sp,
+                                    fontWeight = FontWeight.Black,
+                                    color = Color(0xFF0055FF),
+                                    text = "${TaxiCalc.counter.value}m"
+                                )
+                                LinearProgressIndicator(
+                                    modifier = Modifier
+                                        .background(
+                                            color = Color(0xFF333333),
+                                            shape = RoundedCornerShape(100)
+                                        )
+                                        .height(15.dp)
+                                        .clip(RoundedCornerShape(100)),
+                                    progress = if (TaxiCalc._counter.value == 0) 0f else 1f - (TaxiCalc.counter.value.toFloat() / TaxiCalc._counter.value.toFloat()),
+                                    trackColor = Color(0xFF333333),
+                                    color = Color(0xFF0055FF)
+                                )
+                            }
                             Text(
                                 fontSize = 80.sp,
                                 fontWeight = FontWeight.Black,
