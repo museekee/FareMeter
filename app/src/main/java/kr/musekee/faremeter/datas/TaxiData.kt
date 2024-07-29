@@ -3,7 +3,7 @@ package kr.musekee.faremeter.datas
 object TaxiData {
     val seoul = TaxiTransportation(
         minFare = 4800,
-        minDistance = 50,
+        minDistance = 1600,
         runFare = 100.0,
         runDistance = 131,
         timeFare = 100,

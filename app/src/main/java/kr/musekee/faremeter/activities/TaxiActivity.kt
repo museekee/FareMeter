@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kr.musekee.faremeter.R
 import kr.musekee.faremeter.activities.ui.theme.FareMeterTheme
+import kr.musekee.faremeter.components.KeepScreenOn
 import kr.musekee.faremeter.components.taxi.TaxiButton
 import kr.musekee.faremeter.components.taxi.TaxiButtonColor
 import kr.musekee.faremeter.components.taxi.TaxiHorse
@@ -48,6 +49,8 @@ class TaxiActivity : ComponentActivity() {
         SetLandscape(this)
         setContent {
             FareMeterTheme {
+                KeepScreenOn()
+
                 var useIntercity by remember { mutableStateOf(false) }
                 var useNight by remember { mutableStateOf(false) }
                 Column(
