@@ -27,7 +27,7 @@
         <service
             android:name=".libs.LocationService"
             android:exported="false"
-            android:foregroundServiceType="location"></service>
+            android:foregroundServiceType="location" />
 
         <activity
             android:name=".MainActivity"

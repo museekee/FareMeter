@@ -1,12 +1,19 @@
 package kr.musekee.faremeter
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import kr.musekee.faremeter.screens.BottomNavigation
@@ -20,7 +27,23 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
+            val permissions = arrayOf(
+//                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
 
+            val launcherMultiplePermissions = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestMultiplePermissions()
+            ) { permissionsMap ->
+                val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
+                if (!areGranted)
+                    (permissions)
+            }
+//            checkAndRequestPermissions(
+//                this,
+//                permissions,
+//                launcherMultiplePermissions
+//            )
             FareMeterTheme {
                 Scaffold(
                     topBar = {},
@@ -33,6 +56,21 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+    private fun checkAndRequestPermissions(
+        context: Context,
+        permissions: Array<String>,
+        launcher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>,
+    ) {
+        /** 권한이 없는 경우 **/
+        if (!permissions.all {
+            ContextCompat.checkSelfPermission(
+                context,
+                it
+            ) == PackageManager.PERMISSION_GRANTED
+        }) {
+            launcher.launch(permissions)
         }
     }
 }

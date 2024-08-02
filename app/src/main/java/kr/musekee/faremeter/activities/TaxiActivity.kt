@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,8 +32,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,9 +47,11 @@ import kr.musekee.faremeter.components.KeepScreenOn
 import kr.musekee.faremeter.components.taxi.TaxiButton
 import kr.musekee.faremeter.components.taxi.TaxiButtonColor
 import kr.musekee.faremeter.components.taxi.TaxiHorse
+import kr.musekee.faremeter.libs.GPSStatus
 import kr.musekee.faremeter.libs.LocationService
 import kr.musekee.faremeter.libs.MeterUtil
 import kr.musekee.faremeter.libs.SetLandscape
+import kr.musekee.faremeter.transportationCalc.FareType
 import kr.musekee.faremeter.transportationCalc.TaxiCalc
 
 class TaxiActivity : ComponentActivity() {
@@ -115,9 +123,49 @@ class TaxiActivity : ComponentActivity() {
                             .padding(horizontal = 70.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        TaxiHorse(
-                            speed = TaxiCalc.speed.value.toDouble()
-                        )
+                        Column(
+                            modifier = Modifier
+                                .size(210.dp, 190.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(
+                                    space = 15.dp,
+                                    alignment = Alignment.End
+                                )
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(40.dp),
+                                    imageVector = when (TaxiCalc.fareType.value) {
+                                        FareType.TIME -> ImageVector.vectorResource(id = R.drawable.ic_timer)
+                                        FareType.DISTANCE -> ImageVector.vectorResource(id = R.drawable.ic_speed)
+                                    },
+                                    contentDescription = when (TaxiCalc.fareType.value) {
+                                        FareType.TIME -> "동시 병산제"
+                                        FareType.DISTANCE -> "거리 비례제"
+                                    },
+                                    tint = Color.White
+                                )
+                                Icon(
+                                    modifier = Modifier
+                                        .size(40.dp),
+                                    imageVector = when (MeterUtil.gpsStatus.value) {
+                                        GPSStatus.STABLE -> ImageVector.vectorResource(id = R.drawable.ic_satellite)
+                                        GPSStatus.UNSTABLE -> ImageVector.vectorResource(id = R.drawable.ic_satellite_no)
+                                    },
+                                    contentDescription = when (MeterUtil.gpsStatus.value) {
+                                        GPSStatus.STABLE -> "GPS 연결됨"
+                                        GPSStatus.UNSTABLE -> "GPS 연결 안됨"
+                                    },
+                                    tint = Color.White
+                                )
+                            }
+                            TaxiHorse(
+                                speed = TaxiCalc.speed.value.toDouble()
+                            )
+                        }
                         Spacer(Modifier.weight(1f))
                         Column {
                             Row(

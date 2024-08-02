@@ -10,7 +10,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.location.Location
 import android.location.LocationManager
+import android.location.LocationProvider
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -56,6 +58,17 @@ class LocationService : Service(), LocationListenerCompat {
     override fun onLocationChanged(location: Location) {
         MeterUtil.increaseFare(location.speed)
         notiGosu(false)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onStatusChanged(provider: String, status: Int, extras: Bundle?) {
+        MeterUtil.gpsStatus.value = if (status == LocationProvider.OUT_OF_SERVICE)
+            GPSStatus.UNSTABLE
+        else if (status == LocationProvider.TEMPORARILY_UNAVAILABLE)
+            GPSStatus.UNSTABLE
+        else
+            GPSStatus.STABLE
+        super.onStatusChanged(provider, status, extras)
     }
 
     fun stopUsingGps() {

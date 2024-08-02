@@ -6,6 +6,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.preference.PreferenceManager
 import kr.musekee.faremeter.datas.TaxiData
 import kr.musekee.faremeter.datas.TaxiTransportation
@@ -13,6 +14,10 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+enum class FareType {
+    TIME,
+    DISTANCE
+}
 
 object TaxiCalc {
     private var lastUpdateTime = 0L
@@ -34,6 +39,7 @@ object TaxiCalc {
     val distance: MutableState<Double> = mutableDoubleStateOf(0.0) // m
     val speed: MutableState<Float> = mutableFloatStateOf(0.0f) // m/s
     val _counter: MutableState<Int> = mutableIntStateOf(0)
+    val fareType: MutableState<FareType> = mutableStateOf(FareType.TIME)
 
     private var isNight = false
     private var isIntercity = false
@@ -85,10 +91,12 @@ object TaxiCalc {
         val curDistance = speed.value * deltaTime
         distance.value += curDistance
 
-        counter.value -= if (speed.value <= 4.2) { // 약 15km/h보다 느릴 때 (시간 요금), 택시일 때
-            (runDistance / timeTime * deltaTime).toInt()
+        counter.value -= if (speed.value <= 4.2) { // 약 15km/h보다 느릴 때 (시간 요금 + 거리 요금), 택시일 때
+            fareType.value = FareType.TIME
+            (runDistance / timeTime * deltaTime).toInt() + curDistance.toInt() // 시간 요금 + 거리 요금
         } else {
-            curDistance.toInt()
+            fareType.value = FareType.DISTANCE
+            curDistance.toInt() // 거리 요금
         }
 
         if (counter.value <= 0) {
