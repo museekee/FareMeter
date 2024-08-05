@@ -56,7 +56,7 @@ class LocationService : Service(), LocationListenerCompat {
         stopForeground(STOP_FOREGROUND_REMOVE)
     }
     override fun onLocationChanged(location: Location) {
-        MeterUtil.increaseFare(location.speed)
+        MeterUtil.increaseFare(150f)
         notiGosu(false)
     }
 

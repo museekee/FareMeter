@@ -27,18 +27,18 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
-            val permissions = arrayOf(
+//            val permissions = arrayOf(
 //                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-
-            val launcherMultiplePermissions = rememberLauncherForActivityResult(
-                ActivityResultContracts.RequestMultiplePermissions()
-            ) { permissionsMap ->
-                val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
-                if (!areGranted)
-                    (permissions)
-            }
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            )
+//
+//            val launcherMultiplePermissions = rememberLauncherForActivityResult(
+//                ActivityResultContracts.RequestMultiplePermissions()
+//            ) { permissionsMap ->
+//                val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
+//                if (!areGranted)
+//                    (permissions)
+//            }
 //            checkAndRequestPermissions(
 //                this,
 //                permissions,

@@ -34,6 +34,8 @@ object TaxiCalc {
     private var nightTime: List<List<Int>> = listOf()
 
     val fare: MutableState<Int> = mutableIntStateOf(0)
+    val nightFare: MutableState<Int> = mutableIntStateOf(0)
+    val intercityFare: MutableState<Int> = mutableIntStateOf(0)
 
     val counter: MutableState<Int> = mutableIntStateOf(0)
     val distance: MutableState<Double> = mutableDoubleStateOf(0.0) // m
@@ -102,9 +104,11 @@ object TaxiCalc {
         if (counter.value <= 0) {
             val nowHour = SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().time).toInt()
             val nightIndex = nightTime.indexOfFirst { it.any { inner -> inner == nowHour } }
-            val nightFare = if (isNight) nightRate[nightIndex] * runFare else 0.0
-            val intercityFare = if (isIntercity) intercityRate * runFare else 0.0
-            fare.value += (runFare + nightFare + intercityFare).toInt()
+            val nightAdditionalFare = if (isNight && nightIndex != -1) nightRate[nightIndex] * runFare else 0.0
+            val intercityAdditionalFare = if (isIntercity) intercityRate * runFare else 0.0
+            nightFare.value += nightAdditionalFare.toInt()
+            intercityFare.value += intercityAdditionalFare.toInt()
+            fare.value += (runFare + nightAdditionalFare + intercityAdditionalFare).toInt()
             counter.value = runDistance
             _counter.value = runDistance
         }
@@ -118,19 +122,19 @@ object TaxiCalc {
         isNight = enabled
         val nowHour = SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().time).toInt()
         val nightIndex = nightTime.indexOfFirst { it.any { inner -> inner == nowHour } }
-        val nightFare = if (nightIndex == -1) 0 else (nightRate[nightIndex] * minFare.toDouble()).toInt()
+        val nightMinFare = if (nightIndex == -1) 0 else (nightRate[nightIndex] * minFare.toDouble()).toInt()
         if (enabled)
-            fare.value += nightFare
+            fare.value += nightMinFare + nightFare.value
         else
-            fare.value -= nightFare
+            fare.value -= nightMinFare + nightFare.value
     }
 
     fun toggleIntercity(enabled: Boolean) {
         isIntercity = enabled
-        val intercityFare = (intercityRate * minFare.toDouble()).toInt()
+        val intercityMinFare = (intercityRate * minFare.toDouble()).toInt()
         if (enabled)
-            fare.value += intercityFare
+            fare.value += intercityMinFare + intercityFare.value
         else
-            fare.value -= intercityFare
+            fare.value -= intercityMinFare + intercityFare.value
     }
 }

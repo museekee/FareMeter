@@ -163,7 +163,7 @@ class TaxiActivity : ComponentActivity() {
                                 )
                             }
                             TaxiHorse(
-                                speed = TaxiCalc.speed.value.toDouble()
+                                speed = TaxiCalc.speed.value * 3.6
                             )
                         }
                         Spacer(Modifier.weight(1f))
