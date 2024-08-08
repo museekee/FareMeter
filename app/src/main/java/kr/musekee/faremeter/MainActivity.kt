@@ -1,14 +1,12 @@
 package kr.musekee.faremeter
 
-import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -16,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
+import kr.musekee.faremeter.libs.RecordSql
 import kr.musekee.faremeter.screens.BottomNavigation
 import kr.musekee.faremeter.screens.NavigationHost
 import kr.musekee.faremeter.ui.theme.FareMeterTheme
@@ -25,6 +24,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+
+        val rsql = RecordSql(this)
+        Log.d("RSQL", rsql.getAllData(
+            type = null,
+            limit = null
+        )[0].endTime.time.toString())
         setContent {
             val navController = rememberNavController()
 //            val permissions = arrayOf(
