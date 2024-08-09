@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -34,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +50,7 @@ import kr.musekee.faremeter.libs.MeterUtil
 import kr.musekee.faremeter.libs.SetLandscape
 import kr.musekee.faremeter.transportationCalc.FareType
 import kr.musekee.faremeter.transportationCalc.TaxiCalc
+import kr.musekee.faremeter.ui.theme.lineSeedKr
 
 class TaxiActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -217,13 +215,15 @@ class TaxiActivity : ComponentActivity() {
                         Text(
                             modifier = Modifier
                                 .alpha(if (useIntercity) 1f else 0f),
-                            fontWeight = FontWeight.Black,
+                            fontFamily = lineSeedKr,
+                            fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             color = Color.White,
                             text = "시외 할증 포함"
                         )
                         Text(
-                            fontWeight = FontWeight.Black,
+                            fontFamily = lineSeedKr,
+                            fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             color = Color.White,
                             text = "주행 거리: ${(TaxiCalc.distance.value / 100).toInt() / 10}km"
@@ -231,7 +231,8 @@ class TaxiActivity : ComponentActivity() {
                         Text(
                             modifier = Modifier
                                 .alpha(if (useNight) 1f else 0f),
-                            fontWeight = FontWeight.Black,
+                            fontFamily = lineSeedKr,
+                            fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             color = Color.White,
                             text = "야간 할증 포함"

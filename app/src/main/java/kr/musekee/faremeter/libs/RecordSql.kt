@@ -9,10 +9,6 @@ import java.util.Locale
 
 
 class RecordSql(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-    // array로 save하고 load할때 array를 읽어서 Data class를 return하자
-    // 차후 preferancedatatable인가로 전환해서 sql 문법 써야지
-    // 그냥 sqlite로 하자...
-    private var dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     override fun onCreate(sqLiteDatabase: SQLiteDatabase) {
         // SQL 컬럼 작명 찾아보자
         sqLiteDatabase.execSQL("""
@@ -29,14 +25,11 @@ class RecordSql(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nu
         """.trimIndent())
         sqLiteDatabase.execSQL("INSERT INTO Results VALUES (1, 'TAXI', '2024-08-03 23:00:00', '2024-08-04 00:01:00', 54166, 32.2, 70.3, 102.4)")
         sqLiteDatabase.execSQL("INSERT INTO Results VALUES (2, 'TAXI', '2024-08-07 04:00:00', '2024-08-07 05:00:00', 35000, 50.2, 104.3, 62.1)")
-        // SELECT datetime('now', 'localtime')
-//        sqLiteDatabase.execSQL("INSERT INTO Members VALUES (1,'Kim',20);")
     }
 
     override fun onUpgrade(sqLiteDatabase: SQLiteDatabase, i: Int, i1: Int) {
     }
 
-    // type optional로 받기 => Data class를 return하자
     fun getAllData(type: String?, limit: Int?): MutableList<RecordData> {
         val db = this.writableDatabase
         val res = db.rawQuery("select * from Results", null)
@@ -59,6 +52,7 @@ class RecordSql(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nu
     companion object {
         private const val DATABASE_NAME = "data.db"
         private const val DATABASE_VERSION = 1
+        var dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     }
 }
 

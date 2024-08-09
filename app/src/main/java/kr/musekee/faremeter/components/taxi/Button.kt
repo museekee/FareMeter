@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kr.musekee.faremeter.R
+import kr.musekee.faremeter.ui.theme.lineSeedKr
 
 @Composable
 fun TaxiButton(color: TaxiButtonColor, label: String, onClick: () -> Unit) {
@@ -64,9 +65,10 @@ fun TaxiButton(color: TaxiButtonColor, label: String, onClick: () -> Unit) {
                     .size(width, height)
                     .wrapContentHeight(align = Alignment.CenterVertically),
                 fontSize = 22.sp,
-                fontWeight = FontWeight.Black,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                text = label
+                text = label,
+                fontFamily = lineSeedKr
             )
         }
     }

@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -20,6 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kr.musekee.faremeter.R
+import kr.musekee.faremeter.RESULTS
 import kr.musekee.faremeter.SELECT_TRANSPORTATION
 import kr.musekee.faremeter.SETTINGS
 
@@ -31,7 +31,8 @@ fun BottomNavigation(
     val currentRoute = navBackStackEntry?.destination?.route
     val items = listOf(
         BottomNavItem.Settings,
-        BottomNavItem.SelectTransportation
+        BottomNavItem.SelectTransportation,
+        BottomNavItem.Results
     )
     NavigationBar(
         containerColor = Color(0xFF333333),
@@ -76,6 +77,7 @@ sealed class BottomNavItem(
 ) {
     data object Settings : BottomNavItem(R.string.Settings, R.drawable.ic_spanner, SETTINGS)
     data object SelectTransportation : BottomNavItem(R.string.SelectTransportation, R.drawable.ic_taxi, SELECT_TRANSPORTATION)
+    data object Results : BottomNavItem(R.string.Results, R.drawable.ic_history, RESULTS)
 }
 
 @Composable
@@ -86,6 +88,9 @@ fun NavigationHost(navController: NavHostController) {
         }
         composable(BottomNavItem.SelectTransportation.screenRoute) {
             SelectTransportation()
+        }
+        composable(BottomNavItem.Results.screenRoute) {
+            Results()
         }
     }
 }
