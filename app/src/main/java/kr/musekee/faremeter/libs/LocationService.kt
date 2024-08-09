@@ -22,6 +22,7 @@ import kr.musekee.faremeter.MainActivity
 import kr.musekee.faremeter.NOTI_CHANNEL
 import kr.musekee.faremeter.R
 import kr.musekee.faremeter.activities.TaxiActivity
+import java.util.Date
 
 
 class LocationService : Service(), LocationListenerCompat {
@@ -30,12 +31,16 @@ class LocationService : Service(), LocationListenerCompat {
     private lateinit var locationManager: LocationManager
     private lateinit var pref: SharedPreferences
     private var transportation = "taxi"
+    private lateinit var startTime: Date
+    private var averageSpeed: Float = 0f
+    private var topSpeed: Float = 0f
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!PermissionUtil.checkLocationPermission(this)) {
             PermissionUtil.openAppInfo(this)
             stopSelf()
         }
+        startTime = Date()
         pref = PreferenceManager.getDefaultSharedPreferences(this)
         transportation = pref.getString("pref_transportation", "taxi") ?: "taxi"
 
@@ -53,10 +58,28 @@ class LocationService : Service(), LocationListenerCompat {
         super.onDestroy()
         MeterUtil.resetValues()
         locationManager.removeUpdates(this)
+        RecordSql(this).saveData(
+            RecordData(
+                _id = 0,
+                type = transportation.uppercase(),
+                startTime = startTime,
+                endTime = Date(),
+                fare = MeterUtil.fare.value,
+                averageSpeed = averageSpeed,
+                topSpeed = topSpeed,
+                distance = MeterUtil.distance.value
+            )
+        )
         stopForeground(STOP_FOREGROUND_REMOVE)
     }
     override fun onLocationChanged(location: Location) {
         MeterUtil.increaseFare(location.speed)
+        if (averageSpeed == 0f) averageSpeed = location.speed
+        averageSpeed += location.speed
+        averageSpeed /= 2
+
+        if (location.speed > topSpeed)
+            topSpeed = location.speed
         notiGosu(false)
     }
 

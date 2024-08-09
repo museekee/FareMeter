@@ -24,12 +24,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-
-        val rsql = RecordSql(this)
-        Log.d("RSQL", rsql.getAllData(
-            type = null,
-            limit = null
-        )[0].endTime.time.toString())
         setContent {
             val navController = rememberNavController()
 //            val permissions = arrayOf(

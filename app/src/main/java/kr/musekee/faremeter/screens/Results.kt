@@ -15,6 +15,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,8 +54,12 @@ fun Results() {
                 .weight(1f)
                 .verticalScroll(scrollState)
         ) {
-            ResultItem(0, "TAXI", 48656, 354.9f, RecordSql.dateFormat.parse("2024-08-04 18:13:54")!!)
-            ResultItem(1, "TAXI", 39800, 169.9f, RecordSql.dateFormat.parse("2024-08-03 23:00:00")!!)
+            RecordSql(LocalContext.current).getAllData(
+                type = null,
+                limit = null
+            ).mapIndexed { index, it ->
+                ResultItem(index, it.type, it.fare, it.distance, it.endTime)
+            }
         }
     }
 }

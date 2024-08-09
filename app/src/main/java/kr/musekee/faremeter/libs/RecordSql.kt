@@ -1,5 +1,6 @@
 package kr.musekee.faremeter.libs
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -10,7 +11,6 @@ import java.util.Locale
 
 class RecordSql(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onCreate(sqLiteDatabase: SQLiteDatabase) {
-        // SQL 컬럼 작명 찾아보자
         sqLiteDatabase.execSQL("""
             create table Results (
                 _ID integer primary key autoincrement,
@@ -30,23 +30,42 @@ class RecordSql(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nu
     override fun onUpgrade(sqLiteDatabase: SQLiteDatabase, i: Int, i1: Int) {
     }
 
+    fun saveData(data: RecordData) {
+        val db = this.writableDatabase
+        val cv = ContentValues()
+        cv.put("TYPE", data.type)
+        cv.put("START_TIME", dateFormat.format(data.startTime))
+        cv.put("END_TIME", dateFormat.format(data.endTime))
+        cv.put("FARE", data.fare)
+        cv.put("AVERAGE_SPEED", data.averageSpeed)
+        cv.put("TOP_SPEED", data.topSpeed)
+        cv.put("DISTANCE", data.distance)
+
+        db.insert("Results", null, cv)
+        db.close()
+    }
+
     fun getAllData(type: String?, limit: Int?): MutableList<RecordData> {
         val db = this.writableDatabase
         val res = db.rawQuery("select * from Results", null)
         val data = mutableListOf<RecordData>()
         res.use {
-            it.moveToFirst()
-            data += RecordData(
-                _id = it.getInt(it.getColumnIndexOrThrow("_ID")),
-                type = it.getString(it.getColumnIndexOrThrow("TYPE")),
-                startTime = dateFormat.parse(it.getString(it.getColumnIndexOrThrow("START_TIME"))) ?: Date(System.currentTimeMillis()),
-                endTime = dateFormat.parse(it.getString(it.getColumnIndexOrThrow("END_TIME"))) ?: Date(System.currentTimeMillis()),
-                fare = it.getInt(it.getColumnIndexOrThrow("FARE")),
-                averageSpeed = it.getFloat(it.getColumnIndexOrThrow("AVERAGE_SPEED")),
-                topSpeed = it.getFloat(it.getColumnIndexOrThrow("TOP_SPEED")),
-                distance = it.getFloat(it.getColumnIndexOrThrow("DISTANCE")),
-            )
+            if (it.moveToFirst())
+                do {
+                    data += RecordData(
+                        _id = it.getInt(it.getColumnIndexOrThrow("_ID")),
+                        type = it.getString(it.getColumnIndexOrThrow("TYPE")),
+                        startTime = dateFormat.parse(it.getString(it.getColumnIndexOrThrow("START_TIME"))) ?: Date(System.currentTimeMillis()),
+                        endTime = dateFormat.parse(it.getString(it.getColumnIndexOrThrow("END_TIME"))) ?: Date(System.currentTimeMillis()),
+                        fare = it.getInt(it.getColumnIndexOrThrow("FARE")),
+                        averageSpeed = it.getFloat(it.getColumnIndexOrThrow("AVERAGE_SPEED")),
+                        topSpeed = it.getFloat(it.getColumnIndexOrThrow("TOP_SPEED")),
+                        distance = it.getDouble(it.getColumnIndexOrThrow("DISTANCE")),
+                    )
+                }
+                while (it.moveToNext())
         }
+        db.close()
         return data
     }
     companion object {
@@ -64,5 +83,5 @@ data class RecordData(
     val fare: Int,
     val averageSpeed: Float,
     val topSpeed: Float,
-    val distance: Float
+    val distance: Double
 )

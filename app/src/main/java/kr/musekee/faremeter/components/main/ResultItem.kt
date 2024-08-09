@@ -33,7 +33,7 @@ fun ResultItem(
     idx: Int,
     transportation: String,
     fare: Int,
-    distance: Float,
+    distance: Double,
     date: Date
 ) {
     
