@@ -1,11 +1,28 @@
 package kr.musekee.faremeter.datas
 
+import androidx.compose.ui.graphics.Color
+import kr.musekee.faremeter.R
+
 /**
  * 모든 요금의 단위는 원 (￦)이고,
  * 거리의 단위는 미터 (m)이며,
  * 시간의 단위는 분 (min)이다.
  * 그리고 모든 Rate는 소수 (0.2, 0.4)로 한다.
  */
+
+val unknownTransportation = Transportation("UNKNOWN", R.drawable.ic_taxi, R.string.Unknown, Color(0xFFBBBBBB))
+val taxi = Transportation("TAXI", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D))
+val transportations = listOf<Transportation>(
+    unknownTransportation,
+    taxi
+)
+
+data class Transportation(
+    val id: String, // TAXI
+    val icon: Int, // R.drawable.ic_taxi
+    val label: Int, // R.string.Taxi
+    val color: Color
+)
 
 data class TaxiTransportation(
     val minFare: Int, // 기본 요금

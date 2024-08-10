@@ -17,11 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kr.musekee.faremeter.R
+import kr.musekee.faremeter.datas.transportations
+import kr.musekee.faremeter.datas.unknownTransportation
 import kr.musekee.faremeter.screens.bottomBorder
 import kr.musekee.faremeter.ui.theme.lineSeedKr
 import kr.musekee.faremeter.ui.theme.nanumGothic
@@ -36,7 +38,8 @@ fun ResultItem(
     distance: Double,
     date: Date
 ) {
-    
+    val transportationData = transportations.find { it.id == transportation } ?: unknownTransportation
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -59,9 +62,9 @@ fun ResultItem(
             modifier = Modifier
                 .size(90.dp)
                 .padding(17.dp),
-            painter = painterResource(id = R.drawable.ic_taxi),
-            contentDescription = "택시",
-            tint = Color(0xFFFFDE4D)
+            painter = painterResource(id = transportationData.icon),
+            contentDescription = stringResource(transportationData.label),
+            tint = transportationData.color
         )
         Column( // 운임
             modifier = Modifier
@@ -75,7 +78,7 @@ fun ResultItem(
                 fontSize = 25.sp
             )
             Text(
-                text = "$distance km",
+                text = "${(distance/100).toInt()/10} km",
                 fontFamily = lineSeedKr,
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp

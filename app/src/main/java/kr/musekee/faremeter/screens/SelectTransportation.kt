@@ -9,16 +9,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kr.musekee.faremeter.R
 import kr.musekee.faremeter.activities.TaxiActivity
 import kr.musekee.faremeter.components.main.MainButton
+import kr.musekee.faremeter.datas.taxi
 import kr.musekee.faremeter.libs.SetPortrait
 
 @Composable
@@ -42,9 +41,9 @@ fun SelectTransportation() {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             MainButton(
-                label = stringResource(id = R.string.Taxi),
-                icon = R.drawable.ic_taxi,
-                color = Color(0xFFFFDE4D),
+                label = stringResource(id = taxi.label),
+                icon = taxi.icon,
+                color = taxi.color,
                 onClick = {
                     context.startActivity(Intent(context, TaxiActivity::class.java))
                 }

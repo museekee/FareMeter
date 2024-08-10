@@ -22,6 +22,8 @@ import kr.musekee.faremeter.MainActivity
 import kr.musekee.faremeter.NOTI_CHANNEL
 import kr.musekee.faremeter.R
 import kr.musekee.faremeter.activities.TaxiActivity
+import kr.musekee.faremeter.datas.taxi
+import kr.musekee.faremeter.datas.unknownTransportation
 import java.util.Date
 
 
@@ -30,7 +32,7 @@ class LocationService : Service(), LocationListenerCompat {
     private val mNotificationId = 1
     private lateinit var locationManager: LocationManager
     private lateinit var pref: SharedPreferences
-    private var transportation = "taxi"
+    private var transportation = unknownTransportation.id
     private lateinit var startTime: Date
     private var averageSpeed: Float = 0f
     private var topSpeed: Float = 0f
@@ -42,7 +44,7 @@ class LocationService : Service(), LocationListenerCompat {
         }
         startTime = Date()
         pref = PreferenceManager.getDefaultSharedPreferences(this)
-        transportation = pref.getString("pref_transportation", "taxi") ?: "taxi"
+        transportation = pref.getString("pref_transportation", unknownTransportation.id) ?: unknownTransportation.id // 지금 무조건 unknown인건 pref_trnasportation 설정하는거 아직 안 만들어서 그럼
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager.requestLocationUpdates(
@@ -61,7 +63,7 @@ class LocationService : Service(), LocationListenerCompat {
         RecordSql(this).saveData(
             RecordData(
                 _id = 0,
-                type = transportation.uppercase(),
+                type = transportation,
                 startTime = startTime,
                 endTime = Date(),
                 fare = MeterUtil.fare.value,
@@ -99,9 +101,9 @@ class LocationService : Service(), LocationListenerCompat {
     }
 
     private fun notiGosu(isFirst: Boolean) {
-        val notiIntent = if (transportation == "taxi") {
+        val notiIntent = if (transportation == taxi.id)
             Intent(this, TaxiActivity::class.java)
-        }
+
         else Intent(this, MainActivity::class.java)
         notiIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK and Intent.FLAG_ACTIVITY_CLEAR_TASK
 
