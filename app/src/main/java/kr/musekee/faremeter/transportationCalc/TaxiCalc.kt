@@ -50,8 +50,8 @@ object TaxiCalc {
 
     fun init(context: Context) {
         pref = PreferenceManager.getDefaultSharedPreferences(context)
-        val locationPrefs = pref.getString("pref_location", null)
-        transportationData = TaxiData.getDataByName(locationPrefs)
+        val fareCalcTypePref = pref.getString("pref_fareCalcType", null)
+        transportationData = TaxiData.getData(fareCalcTypePref)
 
         transportationData.let {
             minFare = it.minFare

@@ -24,6 +24,7 @@ import kr.musekee.faremeter.R
 import kr.musekee.faremeter.activities.TaxiActivity
 import kr.musekee.faremeter.datas.taxi
 import kr.musekee.faremeter.datas.unknownTransportation
+import kr.musekee.faremeter.transportationCalc.TaxiCalc
 import java.util.Date
 
 
@@ -32,6 +33,7 @@ class LocationService : Service(), LocationListenerCompat {
     private val mNotificationId = 1
     private lateinit var locationManager: LocationManager
     private lateinit var pref: SharedPreferences
+    private lateinit var fareCalcType: String
     private var transportation = unknownTransportation.id
     private lateinit var startTime: Date
     private var averageSpeed: Float = 0f
@@ -45,6 +47,7 @@ class LocationService : Service(), LocationListenerCompat {
         startTime = Date()
         pref = PreferenceManager.getDefaultSharedPreferences(this)
         transportation = pref.getString("pref_transportation", unknownTransportation.id) ?: unknownTransportation.id // 지금 무조건 unknown인건 pref_trnasportation 설정하는거 아직 안 만들어서 그럼
+        fareCalcType = pref.getString("pref_fareCalcType", null) ?: ""
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager.requestLocationUpdates(
@@ -63,7 +66,8 @@ class LocationService : Service(), LocationListenerCompat {
         RecordSql(this).saveData(
             RecordData(
                 _id = 0,
-                type = transportation,
+                fareCalcType = fareCalcType,
+                transportation = transportation,
                 startTime = startTime,
                 endTime = Date(),
                 fare = MeterUtil.fare.value,

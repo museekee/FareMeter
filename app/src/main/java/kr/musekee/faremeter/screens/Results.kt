@@ -58,7 +58,7 @@ fun Results() {
                 type = null,
                 limit = null
             ).mapIndexed { index, it ->
-                ResultItem(index, it.type, it.fare, it.distance, it.endTime)
+                ResultItem(index, it.transportation, it.fare, it.distance, it.endTime)
             }
         }
     }

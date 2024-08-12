@@ -9,12 +9,13 @@ import java.util.Date
 import java.util.Locale
 
 
-class RecordSql(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class RecordSql(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onCreate(sqLiteDatabase: SQLiteDatabase) {
         sqLiteDatabase.execSQL("""
             create table Results (
                 _ID integer primary key autoincrement,
-                TYPE TEXT,
+                FARE_CALC_TYPE TEXT,
+                TRANSPORTATION TEXT,
                 START_TIME TEXT,
                 END_TIME TEXT,
                 FARE INTEGER,
@@ -33,7 +34,8 @@ class RecordSql(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nu
     fun saveData(data: RecordData) {
         val db = this.writableDatabase
         val cv = ContentValues()
-        cv.put("TYPE", data.type)
+        cv.put("FARE_CALC_TYPE", data.fareCalcType)
+        cv.put("TRANSPORTATION", data.transportation)
         cv.put("START_TIME", dateFormat.format(data.startTime))
         cv.put("END_TIME", dateFormat.format(data.endTime))
         cv.put("FARE", data.fare)
@@ -54,7 +56,8 @@ class RecordSql(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nu
                 do {
                     data += RecordData(
                         _id = it.getInt(it.getColumnIndexOrThrow("_ID")),
-                        type = it.getString(it.getColumnIndexOrThrow("TYPE")),
+                        fareCalcType = it.getString(it.getColumnIndexOrThrow("FARE_CALC_TYPE")),
+                        transportation = it.getString(it.getColumnIndexOrThrow("TRANSPORTATION")),
                         startTime = dateFormat.parse(it.getString(it.getColumnIndexOrThrow("START_TIME"))) ?: Date(System.currentTimeMillis()),
                         endTime = dateFormat.parse(it.getString(it.getColumnIndexOrThrow("END_TIME"))) ?: Date(System.currentTimeMillis()),
                         fare = it.getInt(it.getColumnIndexOrThrow("FARE")),
@@ -76,12 +79,13 @@ class RecordSql(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nu
 }
 
 data class RecordData(
-    val _id: Int,
-    val type: String,
-    val startTime: Date,
-    val endTime: Date,
-    val fare: Int,
-    val averageSpeed: Float,
-    val topSpeed: Float,
-    val distance: Double
+    val _id: Int, // 123
+    val fareCalcType: String, // 서울, 경기, 특실, 일반실, 우등실
+    val transportation: String, // 교통수단
+    val startTime: Date, // 시작 시간
+    val endTime: Date, // 끝 시간
+    val fare: Int, // 운임
+    val averageSpeed: Float, // 평균 속도
+    val topSpeed: Float, // 최고 속도
+    val distance: Double // 거리
 )

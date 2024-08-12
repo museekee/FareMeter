@@ -23,8 +23,8 @@ object TaxiData {
         nightRate = listOf(0.3),
         nightTime = listOf(listOf(23, 0, 1, 2, 3))
     )
-    val names = listOf("서울특별시", "경기도")
-    fun getDataByName(name: String?): TaxiTransportation {
+    val fareCalcTypes = listOf("서울특별시", "경기도")
+    fun getData(name: String?): TaxiTransportation {
         return when (name) {
             "서울특별시" -> seoul
             "경기도" -> gyeonggi
