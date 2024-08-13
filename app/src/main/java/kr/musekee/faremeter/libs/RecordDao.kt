@@ -18,12 +18,12 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
             put("DISTANCE", data.distance)
         }
 
-        return db.insert("Results", null, cv)
+        return db.insert("Records", null, cv)
     }
 
     fun getAllData(type: String?, limit: Int?): MutableList<RecordData> {
         val db = dbHelper.readableDatabase
-        val cursor = db.rawQuery("select * from Results", null)
+        val cursor = db.rawQuery("select * from Records", null)
         val data = mutableListOf<RecordData>()
         cursor.use {
             if (it.moveToFirst())

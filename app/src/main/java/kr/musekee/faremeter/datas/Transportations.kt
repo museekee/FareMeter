@@ -12,18 +12,18 @@ import kr.musekee.faremeter.R
 
 val unknownTransportation = Transportation("UNKNOWN", R.drawable.ic_taxi, R.string.Unknown, Color(0xFFBBBBBB), listOf())
 val taxi = Transportation("TAXI", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), TaxiData.fareCalcTypes)
-val bus = Transportation("BUS", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
-val subway = Transportation("SUBWAY", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
-val tram = Transportation("TRAM", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
-val KTX = Transportation("KTX", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
-val SRT = Transportation("SRT", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
+//val bus = Transportation("BUS", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
+//val subway = Transportation("SUBWAY", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
+//val tram = Transportation("TRAM", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
+//val KTX = Transportation("KTX", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
+//val SRT = Transportation("SRT", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
 val transportations = listOf(
     taxi,
-    bus,
-    subway,
-    tram,
-    KTX,
-    SRT
+//    bus,
+//    subway,
+//    tram,
+//    KTX,
+//    SRT
 )
 
 data class Transportation(

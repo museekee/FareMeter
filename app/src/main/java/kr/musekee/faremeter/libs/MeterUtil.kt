@@ -8,6 +8,8 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.preference.PreferenceManager
+import kr.musekee.faremeter.datas.taxi
+import kr.musekee.faremeter.datas.unknownTransportation
 import kr.musekee.faremeter.transportationCalc.TaxiCalc
 
 enum class GPSStatus {
@@ -18,7 +20,7 @@ enum class GPSStatus {
 object MeterUtil {
     private lateinit var pref: SharedPreferences
 
-    private var transportation = "taxi"
+    private var transportation = "TAXI"
 
     private val taxiCalc = TaxiCalc
 
@@ -30,7 +32,7 @@ object MeterUtil {
     fun init(context: Context) {
         pref = PreferenceManager.getDefaultSharedPreferences(context)
 
-        transportation = pref.getString("pref_transportation", "taxi") ?: "taxi"
+        transportation = pref.getString("pref_transportation", unknownTransportation.id) ?: unknownTransportation.id
 
         taxiCalc.init(context)
         gpsStatus.value = GPSStatus.UNSTABLE
@@ -44,7 +46,7 @@ object MeterUtil {
 
     fun increaseFare(curSpeed: Float) {
         val (mFare, mDistance, mSpeed) = when (transportation) {
-            "taxi" -> taxiCalc.increaseFare(curSpeed)
+            taxi.id -> taxiCalc.increaseFare(curSpeed)
             else -> Triple(mutableIntStateOf(0), mutableDoubleStateOf(0.0), mutableFloatStateOf(0.0f))
         }
         fare.value = mFare.value
