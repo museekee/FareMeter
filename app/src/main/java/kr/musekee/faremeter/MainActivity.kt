@@ -3,7 +3,6 @@ package kr.musekee.faremeter
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.setContent
@@ -16,7 +15,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import androidx.preference.PreferenceManager
 import kr.musekee.faremeter.datas.taxi
-import kr.musekee.faremeter.libs.RecordSql
+import kr.musekee.faremeter.datas.transportations
 import kr.musekee.faremeter.screens.BottomNavigation
 import kr.musekee.faremeter.screens.NavigationHost
 import kr.musekee.faremeter.ui.theme.FareMeterTheme
@@ -25,14 +24,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        // 아... setting을 위해서 싹 다 sql로 갈아야겠다...
+
         val pref = PreferenceManager.getDefaultSharedPreferences(this)
         val edit = pref.edit()
         if (pref.getString("pref_transportation", null) == null)
             edit.putString("pref_transportation", taxi.id)
-        if (pref.getString("pref_fareCalcType", null) == null)
-            edit.putString("pref_fareCalcType", )
-
+        for (transportation in transportations)
+            if (pref.getString("pref_${transportation.id}_calcType", null) == null)
+                edit.putString("pref_${transportation.id}_calcType", transportation.calcTypes[0])
+        edit.apply()
         setContent {
             val navController = rememberNavController()
 //            val permissions = arrayOf(

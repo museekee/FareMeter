@@ -10,18 +10,28 @@ import kr.musekee.faremeter.R
  * 그리고 모든 Rate는 소수 (0.2, 0.4)로 한다.
  */
 
-val unknownTransportation = Transportation("UNKNOWN", R.drawable.ic_taxi, R.string.Unknown, Color(0xFFBBBBBB))
-val taxi = Transportation("TAXI", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D))
-val transportations = listOf<Transportation>(
-    unknownTransportation,
-    taxi
+val unknownTransportation = Transportation("UNKNOWN", R.drawable.ic_taxi, R.string.Unknown, Color(0xFFBBBBBB), listOf())
+val taxi = Transportation("TAXI", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), TaxiData.fareCalcTypes)
+val bus = Transportation("BUS", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
+val subway = Transportation("SUBWAY", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
+val tram = Transportation("TRAM", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
+val KTX = Transportation("KTX", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
+val SRT = Transportation("SRT", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
+val transportations = listOf(
+    taxi,
+    bus,
+    subway,
+    tram,
+    KTX,
+    SRT
 )
 
 data class Transportation(
     val id: String, // TAXI
     val icon: Int, // R.drawable.ic_taxi
     val label: Int, // R.string.Taxi
-    val color: Color
+    val color: Color,
+    val calcTypes: List<String> // 서울특별시, 경기도, 일반실, 우등실
 )
 
 data class TaxiTransportation(

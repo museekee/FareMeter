@@ -25,7 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kr.musekee.faremeter.R
 import kr.musekee.faremeter.components.main.ResultItem
-import kr.musekee.faremeter.libs.RecordSql
+import kr.musekee.faremeter.libs.DatabaseHelper
+import kr.musekee.faremeter.libs.RecordDao
 import kr.musekee.faremeter.ui.theme.lineSeedKr
 
 @Composable
@@ -54,7 +55,7 @@ fun Results() {
                 .weight(1f)
                 .verticalScroll(scrollState)
         ) {
-            RecordSql(LocalContext.current).getAllData(
+            RecordDao(DatabaseHelper(LocalContext.current)).getAllData(
                 type = null,
                 limit = null
             ).mapIndexed { index, it ->

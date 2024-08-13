@@ -24,7 +24,6 @@ import kr.musekee.faremeter.R
 import kr.musekee.faremeter.activities.TaxiActivity
 import kr.musekee.faremeter.datas.taxi
 import kr.musekee.faremeter.datas.unknownTransportation
-import kr.musekee.faremeter.transportationCalc.TaxiCalc
 import java.util.Date
 
 
@@ -47,7 +46,7 @@ class LocationService : Service(), LocationListenerCompat {
         startTime = Date()
         pref = PreferenceManager.getDefaultSharedPreferences(this)
         transportation = pref.getString("pref_transportation", unknownTransportation.id) ?: unknownTransportation.id // 지금 무조건 unknown인건 pref_trnasportation 설정하는거 아직 안 만들어서 그럼
-        fareCalcType = pref.getString("pref_fareCalcType", null) ?: ""
+        fareCalcType = pref.getString("pref_${transportation}_calcType", null) ?: ""
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager.requestLocationUpdates(
@@ -63,7 +62,7 @@ class LocationService : Service(), LocationListenerCompat {
         super.onDestroy()
         MeterUtil.resetValues()
         locationManager.removeUpdates(this)
-        RecordSql(this).saveData(
+        RecordDao(DatabaseHelper(this)).saveData(
             RecordData(
                 _id = 0,
                 fareCalcType = fareCalcType,
