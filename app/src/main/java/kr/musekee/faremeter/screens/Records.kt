@@ -3,13 +3,9 @@ package kr.musekee.faremeter.screens
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
@@ -18,33 +14,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kr.musekee.faremeter.R
+import kr.musekee.faremeter.components.main.MainTitle
 import kr.musekee.faremeter.components.main.ResultItem
 import kr.musekee.faremeter.libs.DatabaseHelper
 import kr.musekee.faremeter.libs.RecordDao
-import kr.musekee.faremeter.ui.theme.lineSeedKr
 
 @Composable
 fun Results() {
     val scrollState = rememberScrollState()
 
     Column {
-        Text( // 제목
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .bottomBorder(1.dp, Color(0xFF777777))
-                .wrapContentHeight(align = Alignment.CenterVertically),
-            text = stringResource(id = R.string.Results),
-            fontWeight = FontWeight.Bold,
-            fontFamily = lineSeedKr,
-            fontSize = 17.sp,
-            textAlign = TextAlign.Center
+        MainTitle(
+            title = stringResource(id = R.string.Results)
         )
         Row {
 

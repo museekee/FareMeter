@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">미터기</string>
+
     <string name="SelectTransportation">교통수단</string>
-    <string name="Settings">설정</string>
-    <string name="Results">주행 기록</string>
     <string name="Unknown">알 수 없음</string>
     <string name="Taxi">택시</string>
     <string name="Bus">버스</string>
+
+    <string name="Settings">설정</string>
+    <string name="Money">요금</string>
+
+    <string name="Results">주행 기록</string>
+
     <string name="title_activity_taxi">TaxiActivity</string>
 </resources>
