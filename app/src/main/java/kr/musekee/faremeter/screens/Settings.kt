@@ -1,6 +1,7 @@
 package kr.musekee.faremeter.screens
 
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,7 +39,8 @@ fun Settings() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 25.dp)
+                .padding(start = 25.dp, top = 5.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             transportations.map {
                 SettingDropDown(

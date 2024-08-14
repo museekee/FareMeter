@@ -48,6 +48,7 @@ import kr.musekee.faremeter.libs.GPSStatus
 import kr.musekee.faremeter.libs.LocationService
 import kr.musekee.faremeter.libs.MeterUtil
 import kr.musekee.faremeter.libs.SetLandscape
+import kr.musekee.faremeter.libs.toSpeedUnit
 import kr.musekee.faremeter.transportationCalc.FareType
 import kr.musekee.faremeter.transportationCalc.TaxiCalc
 import kr.musekee.faremeter.ui.theme.lineSeedKr
@@ -161,7 +162,7 @@ class TaxiActivity : ComponentActivity() {
                                 )
                             }
                             TaxiHorse(
-                                speed = TaxiCalc.speed.value * 3.6
+                                speed = TaxiCalc.speed.value.toSpeedUnit()
                             )
                         }
                         Spacer(Modifier.weight(1f))
@@ -199,7 +200,7 @@ class TaxiActivity : ComponentActivity() {
                                 fontSize = 45.sp,
                                 fontWeight = FontWeight.Black,
                                 color = Color(0xFF27E43A),
-                                text = "${((TaxiCalc.speed.value * 3.6f) * 10f).toInt() / 10f} km/h",
+                                text = "${(TaxiCalc.speed.value.toSpeedUnit() * 10f).toInt() / 10f} km/h",
                                 textAlign = TextAlign.Right
                             )
                         }

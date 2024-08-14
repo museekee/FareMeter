@@ -3,15 +3,16 @@ package kr.musekee.faremeter.components.main
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,20 +25,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import kr.musekee.faremeter.ui.theme.lineSeedKr
 
 @Composable
 fun SettingDropDown(icon: Int, color: Color, name: String, values: List<String>, defaultValue: String, onChange: (newValue: String) -> Unit) {
     var value by remember { mutableStateOf(defaultValue) }
-    var isDropDownMenuExpanded by remember { mutableStateOf(false) }
+    var isDialogPopup by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(65.dp)
-            .clickable { isDropDownMenuExpanded = true },
+            .clickable { isDialogPopup = true },
     ) {
         Icon(
             modifier = Modifier
@@ -68,27 +71,58 @@ fun SettingDropDown(icon: Int, color: Color, name: String, values: List<String>,
             )
         }
     }
-
-    DropdownMenu(
-        modifier = Modifier
-            .wrapContentSize(),
-        expanded = isDropDownMenuExpanded,
-        onDismissRequest = { isDropDownMenuExpanded = false }
-    ) {
-        values.map {
-            DropdownMenuItem(
+    if (isDialogPopup)
+        Dialog(onDismissRequest = {
+            isDialogPopup = false
+        }) {
+            Card(
                 modifier = Modifier
-                    .background(if (it == value) Color.Cyan else Color.Unspecified),
-                text = {
-                    Text(
-                        text = it
-                    )
-                },
-                onClick = {
-                    value = it
-                    onChange(it)
+                    .fillMaxWidth()
+                    .height(500.dp)
+                    .padding(20.dp),
+                shape = RoundedCornerShape(15.dp),
+            ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    fontFamily = lineSeedKr,
+                    text = "요금 체계 선택"
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    values.map {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    color = if (it == value) Color(0x88000000) else Color(0x00000000),
+                                    shape = RoundedCornerShape(15.dp)
+                                )
+                                .clickable {
+                                    value = it
+                                    onChange(it)
+                                    isDialogPopup = false
+                                }
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(10.dp),
+                                text = it,
+                                fontFamily = lineSeedKr,
+                                fontSize = 20.sp,
+                                fontWeight = if (it == value) FontWeight.Bold else FontWeight.Medium,
+                                color = if (it == value) Color(0xFFFFFFFF) else Color.Unspecified
+                            )
+                        }
+                    }
                 }
-            )
+            }
         }
-    }
 }
