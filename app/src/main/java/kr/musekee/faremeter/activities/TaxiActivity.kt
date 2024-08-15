@@ -44,9 +44,11 @@ import kr.musekee.faremeter.components.KeepScreenOn
 import kr.musekee.faremeter.components.taxi.TaxiButton
 import kr.musekee.faremeter.components.taxi.TaxiButtonColor
 import kr.musekee.faremeter.components.taxi.TaxiHorse
+import kr.musekee.faremeter.datas.taxi
 import kr.musekee.faremeter.libs.GPSStatus
 import kr.musekee.faremeter.libs.LocationService
 import kr.musekee.faremeter.libs.MeterUtil
+import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.libs.SetLandscape
 import kr.musekee.faremeter.libs.toSpeedUnit
 import kr.musekee.faremeter.transportationCalc.FareType
@@ -57,6 +59,12 @@ class TaxiActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SetLandscape(this)
+
+        MeterUtil.init(
+            transportation = taxi.id,
+            calcType = PrefManager(this).getCalcType(taxi.id)
+        )
+
         setContent {
             FareMeterTheme {
                 KeepScreenOn()

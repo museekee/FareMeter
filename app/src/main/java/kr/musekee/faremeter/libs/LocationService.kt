@@ -42,13 +42,10 @@ class LocationService : Service(), LocationListenerCompat {
             stopSelf()
         }
         startTime = Date()
+
         pref = PrefManager(this)
         transportation =  pref.transportation
         fareCalcType = pref.getCalcType(transportation)
-        MeterUtil.init(
-            transportation = transportation,
-            calcType = fareCalcType
-        )
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager.requestLocationUpdates(
