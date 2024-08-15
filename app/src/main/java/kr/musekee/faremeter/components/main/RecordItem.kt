@@ -31,7 +31,7 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun ResultItem(
+fun RecordItem(
     idx: Int,
     transportation: String,
     fare: Int,
@@ -50,13 +50,14 @@ fun ResultItem(
     ) {
         Text( // 순번
             modifier = Modifier
+                .width(55.dp)
                 .fillMaxHeight()
                 .wrapContentHeight(align = Alignment.CenterVertically),
             text = (idx+1).toString(),
             fontFamily = nanumGothic,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Right
         )
         Icon( // 아이콘
             modifier = Modifier

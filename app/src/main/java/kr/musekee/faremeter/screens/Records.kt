@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import kr.musekee.faremeter.R
 import kr.musekee.faremeter.components.main.MainTitle
-import kr.musekee.faremeter.components.main.ResultItem
+import kr.musekee.faremeter.components.main.RecordItem
 import kr.musekee.faremeter.libs.DatabaseHelper
 import kr.musekee.faremeter.libs.RecordDao
 
@@ -42,7 +42,7 @@ fun Results() {
                 type = null,
                 limit = null
             ).mapIndexed { index, it ->
-                ResultItem(index, it.transportation, it.fare, it.distance, it.endTime)
+                RecordItem(index, it.transportation, it.fare, it.distance, it.endTime)
             }
         }
     }
