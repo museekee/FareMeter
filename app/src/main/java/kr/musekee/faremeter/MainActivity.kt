@@ -13,9 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
-import androidx.preference.PreferenceManager
 import kr.musekee.faremeter.datas.taxi
 import kr.musekee.faremeter.datas.transportations
+import kr.musekee.faremeter.datas.unknownTransportation
+import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.screens.BottomNavigation
 import kr.musekee.faremeter.screens.NavigationHost
 import kr.musekee.faremeter.ui.theme.FareMeterTheme
@@ -25,14 +26,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val pref = PreferenceManager.getDefaultSharedPreferences(this)
-        val edit = pref.edit()
-        if (pref.getString("pref_transportation", null) == null)
-            edit.putString("pref_transportation", taxi.id)
+        val prefManager = PrefManager(this)
+        if (prefManager.transportation == unknownTransportation.id)
+            prefManager.transportation = taxi.id
         for (transportation in transportations)
-            if (pref.getString("pref_${transportation.id}_calcType", null) == null)
-                edit.putString("pref_${transportation.id}_calcType", transportation.calcTypes[0])
-        edit.apply()
+            if (prefManager.getCalcType(transportation.id) == "")
+                prefManager.setCalcType(transportation.id, transportation.calcTypes[0])
+
         setContent {
             val navController = rememberNavController()
 //            val permissions = arrayOf(

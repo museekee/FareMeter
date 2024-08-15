@@ -1,6 +1,5 @@
 package kr.musekee.faremeter.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,18 +11,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.preference.PreferenceManager
 import kr.musekee.faremeter.R
 import kr.musekee.faremeter.components.main.MainTitle
 import kr.musekee.faremeter.components.main.SettingCategory
 import kr.musekee.faremeter.components.main.SettingDropDown
 import kr.musekee.faremeter.datas.transportations
+import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.libs.SetPortrait
 
 @Composable
 fun Settings() {
     SetPortrait(LocalContext.current)
-    val pref = PreferenceManager.getDefaultSharedPreferences(LocalContext.current)
+    val prefManager = PrefManager(LocalContext.current)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,8 +47,8 @@ fun Settings() {
                     color = it.color,
                     name = stringResource(it.label),
                     values = it.calcTypes,
-                    defaultValue = pref.getString("pref_${it.id}_calcType", it.calcTypes[0]) ?: it.calcTypes[0]) { newValue ->
-                    Log.d("Settings", newValue)
+                    defaultValue = prefManager.getCalcType(it.id)) { newValue ->
+                    prefManager.setCalcType(it.id, newValue)
                 }
             }
         }

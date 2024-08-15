@@ -1,13 +1,10 @@
 package kr.musekee.faremeter.transportationCalc
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.preference.PreferenceManager
 import kr.musekee.faremeter.datas.TaxiData
 import kr.musekee.faremeter.datas.TaxiTransportation
 import java.text.SimpleDateFormat
@@ -21,7 +18,6 @@ enum class FareType {
 
 object TaxiCalc {
     private var lastUpdateTime = 0L
-    private lateinit var pref: SharedPreferences
 
     private var minFare = 0
     private var minDistance = 0
@@ -48,10 +44,8 @@ object TaxiCalc {
 
     private lateinit var transportationData: TaxiTransportation
 
-    fun init(context: Context) {
-        pref = PreferenceManager.getDefaultSharedPreferences(context)
-        val fareCalcTypePref = pref.getString("pref_taxi_calcType", null)
-        transportationData = TaxiData.getData(fareCalcTypePref)
+    fun init(calcType: String) {
+        transportationData = TaxiData.getData(calcType)
 
         transportationData.let {
             minFare = it.minFare

@@ -87,7 +87,6 @@ class TaxiActivity : ComponentActivity() {
                             label = "출발",
                             onClick = {
                                 startService(Intent(this@TaxiActivity, LocationService::class.java))
-                                MeterUtil.init(this@TaxiActivity)
                             }
                         )
                         TaxiButton(

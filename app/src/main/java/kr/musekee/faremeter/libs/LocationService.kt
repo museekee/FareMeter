@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.location.Location
 import android.location.LocationManager
 import android.location.LocationProvider
@@ -17,7 +16,6 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.location.LocationListenerCompat
-import androidx.preference.PreferenceManager
 import kr.musekee.faremeter.MainActivity
 import kr.musekee.faremeter.NOTI_CHANNEL
 import kr.musekee.faremeter.R
@@ -31,7 +29,7 @@ class LocationService : Service(), LocationListenerCompat {
     private lateinit var notification: Notification
     private val mNotificationId = 1
     private lateinit var locationManager: LocationManager
-    private lateinit var pref: SharedPreferences
+    private lateinit var pref: PrefManager
     private lateinit var fareCalcType: String
     private var transportation = unknownTransportation.id
     private lateinit var startTime: Date
@@ -44,9 +42,13 @@ class LocationService : Service(), LocationListenerCompat {
             stopSelf()
         }
         startTime = Date()
-        pref = PreferenceManager.getDefaultSharedPreferences(this)
-        transportation = pref.getString("pref_transportation", unknownTransportation.id) ?: unknownTransportation.id // 지금 무조건 unknown인건 pref_trnasportation 설정하는거 아직 안 만들어서 그럼
-        fareCalcType = pref.getString("pref_${transportation}_calcType", null) ?: ""
+        pref = PrefManager(this)
+        transportation =  pref.transportation
+        fareCalcType = pref.getCalcType(transportation)
+        MeterUtil.init(
+            transportation = transportation,
+            calcType = fareCalcType
+        )
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager.requestLocationUpdates(
