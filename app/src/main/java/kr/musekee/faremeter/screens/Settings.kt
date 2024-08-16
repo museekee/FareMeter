@@ -52,10 +52,10 @@ fun Settings() {
                 icon = R.drawable.ic_calculator,
                 color = Color(0xFF9500FF),
                 name = stringResource(R.string.Unit),
-                values = listOf("km/h"),
+                values = listOf("km/h", "mph", "m/s", "Knot"),
                 dropDownTitle = "속도 단위 선택",
-                defaultValue = "km/h") { newValue ->
-//                    prefManager.setCalcType(it.id, newValue)
+                defaultValue = prefManager.speedUnit) { newValue ->
+                prefManager.speedUnit = newValue
             }
         }
     }

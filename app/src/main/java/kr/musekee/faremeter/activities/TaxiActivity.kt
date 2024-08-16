@@ -59,10 +59,11 @@ class TaxiActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SetLandscape(this)
+        val prefManager = PrefManager(this)
 
         MeterUtil.init(
             transportation = taxi.id,
-            calcType = PrefManager(this).getCalcType(taxi.id)
+            calcType = prefManager.getCalcType(taxi.id)
         )
 
         setContent {
@@ -169,7 +170,7 @@ class TaxiActivity : ComponentActivity() {
                                 )
                             }
                             TaxiHorse(
-                                speed = TaxiCalc.speed.value.toSpeedUnit()
+                                speed = TaxiCalc.speed.value.toSpeedUnit("km/h")
                             )
                         }
                         Spacer(Modifier.weight(1f))
@@ -207,7 +208,7 @@ class TaxiActivity : ComponentActivity() {
                                 fontSize = 45.sp,
                                 fontWeight = FontWeight.Black,
                                 color = Color(0xFF27E43A),
-                                text = "${(TaxiCalc.speed.value.toSpeedUnit() * 10f).toInt() / 10f} km/h",
+                                text = "${(TaxiCalc.speed.value.toSpeedUnit(prefManager.speedUnit) * 10f).toInt() / 10f} ${prefManager.speedUnit}",
                                 textAlign = TextAlign.Right
                             )
                         }

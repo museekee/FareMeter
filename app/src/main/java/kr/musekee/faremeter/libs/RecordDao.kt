@@ -21,7 +21,7 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
         return db.insert("Records", null, cv)
     }
 
-    fun getAllData(type: String?, limit: Int?): MutableList<RecordData> {
+    fun getAllData(transportation: String?, limit: Int?): MutableList<RecordData> {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery("select * from Records", null)
         val data = mutableListOf<RecordData>()

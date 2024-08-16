@@ -28,4 +28,16 @@ class PrefManager(private val context: Context) {
         val pref = PreferenceManager.getDefaultSharedPreferences(context)
         return pref.getString("pref_${id}_calcType", "") ?: ""
     }
+
+    var speedUnit: String
+        set(unit) {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            val edit = pref.edit()
+            edit.putString("pref_speedUnit", unit)
+            edit.apply()
+        }
+        get() {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            return pref.getString("pref_speedUnit", "km/h") ?: "km/h"
+        }
 }

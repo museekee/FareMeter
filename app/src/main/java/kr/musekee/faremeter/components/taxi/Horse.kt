@@ -13,7 +13,7 @@ import kr.musekee.faremeter.R
 import kotlin.math.roundToLong
 
 @Composable
-fun TaxiHorse(speed: Double) {
+fun TaxiHorse(speed: Double) { // km/h
     var imgIdx by remember { mutableIntStateOf(1) }
     val imgs = listOf(
         R.drawable.taxi_horse0,
