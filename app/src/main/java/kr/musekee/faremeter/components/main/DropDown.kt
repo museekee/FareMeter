@@ -32,7 +32,15 @@ import kr.musekee.faremeter.ui.theme.lineSeedKr
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingDropDown(icon: Int, color: Color, name: String, values: List<String>, defaultValue: String, onChange: (newValue: String) -> Unit) {
+fun SettingDropDown(
+    icon: Int,
+    color: Color,
+    name: String,
+    values: List<String>,
+    defaultValue: String,
+    dropDownTitle: String,
+    onChange: (newValue: String) -> Unit
+) {
     var value by remember { mutableStateOf(defaultValue) }
     var isPopup by remember { mutableStateOf(false) }
 
@@ -89,7 +97,7 @@ fun SettingDropDown(icon: Int, color: Color, name: String, values: List<String>,
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp,
                     fontFamily = lineSeedKr,
-                    text = "요금 체계 선택"
+                    text = dropDownTitle
                 )
                 values.map {
                     Box(

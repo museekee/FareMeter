@@ -1,20 +1,16 @@
 package kr.musekee.faremeter.screens
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import kr.musekee.faremeter.R
 import kr.musekee.faremeter.components.main.MainTitle
-import kr.musekee.faremeter.components.main.SettingCategory
 import kr.musekee.faremeter.components.main.SettingDropDown
+import kr.musekee.faremeter.components.main.SettingRow
 import kr.musekee.faremeter.datas.transportations
 import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.libs.SetPortrait
@@ -30,16 +26,10 @@ fun Settings() {
         MainTitle(
             title = stringResource(id = R.string.Settings)
         )
-        SettingCategory(
+        SettingRow(
             icon = R.drawable.ic_money,
             color = Color(0xFFFFE500),
-            label = stringResource(R.string.Money)
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 25.dp, top = 5.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
+            title = stringResource(R.string.Money)
         ) {
             transportations.map {
                 SettingDropDown(
@@ -47,9 +37,25 @@ fun Settings() {
                     color = it.color,
                     name = stringResource(it.label),
                     values = it.calcTypes,
+                    dropDownTitle = "요금 체계 선택",
                     defaultValue = prefManager.getCalcType(it.id)) { newValue ->
                     prefManager.setCalcType(it.id, newValue)
                 }
+            }
+        }
+        SettingRow(
+            icon = R.drawable.ic_speed,
+            color = Color(0xFFEB5656),
+            title = stringResource(R.string.MeterSetting)
+        ) {
+            SettingDropDown(
+                icon = R.drawable.ic_calculator,
+                color = Color(0xFF9500FF),
+                name = stringResource(R.string.Unit),
+                values = listOf("km/h"),
+                dropDownTitle = "속도 단위 선택",
+                defaultValue = "km/h") { newValue ->
+//                    prefManager.setCalcType(it.id, newValue)
             }
         }
     }

@@ -8,6 +8,8 @@
 
     <string name="Settings">설정</string>
     <string name="Money">요금</string>
+    <string name="MeterSetting">미터기 설정</string>
+    <string name="Unit">단위</string>
 
     <string name="Results">주행 기록</string>
 
