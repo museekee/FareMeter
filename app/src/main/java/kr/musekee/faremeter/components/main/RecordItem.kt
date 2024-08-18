@@ -1,5 +1,6 @@
 package kr.musekee.faremeter.components.main
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,7 +37,8 @@ fun RecordItem(
     transportation: String,
     fare: Int,
     distance: Double,
-    date: Date
+    date: Date,
+    onClick: () -> Unit
 ) {
     val transportationData = transportations.find { it.id == transportation } ?: unknownTransportation
 
@@ -45,7 +47,8 @@ fun RecordItem(
             .fillMaxWidth()
             .height(90.dp)
             .bottomBorder(1.dp, Color(0xFF777777))
-            .padding(horizontal = 10.dp),
+            .padding(horizontal = 10.dp)
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text( // 순번
