@@ -1,5 +1,6 @@
 package kr.musekee.faremeter.screens
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -154,14 +155,21 @@ fun Results() {
                                         .size(100.dp)
                                 ) {
                                     // 1분 당 0.5도
-                                    val startAngle = convertToMinutes(dialogData.startTime) / 2f
-                                    val endAngle = convertToMinutes(dialogData.endTime) / 2f
+                                    val startAngle = (convertToMinutes(dialogData.startTime) / 2f) - 90
+                                    val endAngle = (convertToMinutes(dialogData.endTime) / 2f) - 90
+                                    val sweepAngle = if (endAngle >= startAngle) {
+                                        endAngle - startAngle
+                                    } else {
+                                        endAngle - startAngle + 360 // 360도를 더해 시계 방향으로
+                                    }
 
                                     val strokeWidth = 7.5.dp.toPx()
                                     val radius = (100.dp.toPx() - strokeWidth) / 2
 
                                     val centerX = size.width / 2f
                                     val centerY = radius + strokeWidth / 2
+
+                                    Log.d("Records", "$startAngle, $endAngle")
 
                                     drawArc(
                                         color = Color(0xFF353535),
@@ -174,8 +182,8 @@ fun Results() {
                                     )
                                     drawArc(
                                         color = transportationColor,
-                                        startAngle = startAngle-90, // 기본 0도는 3시 방향인 듯...
-                                        sweepAngle = endAngle - startAngle,
+                                        startAngle = startAngle, // 기본 0도는 3시 방향인 듯...
+                                        sweepAngle = sweepAngle,
                                         useCenter = false,
                                         style = Stroke(width = strokeWidth),
                                         topLeft = Offset(centerX - radius, centerY - radius),

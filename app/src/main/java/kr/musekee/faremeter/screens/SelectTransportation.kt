@@ -59,9 +59,9 @@ fun SelectTransportation() {
             Button(
                 onClick = {
                     val calendar = Calendar.getInstance()
-                    calendar.set(2024, Calendar.AUGUST, 17, 10, 48, 31)
+                    calendar.set(2024, Calendar.AUGUST, 17, 22, 48, 31)
                     val startTime = calendar.time
-                    calendar.set(2024, Calendar.AUGUST, 17, 15, 51, 46)
+                    calendar.set(2024, Calendar.AUGUST, 18, 3, 51, 46)
                     val endTime = calendar.time
                     recordDao.saveData(RecordData(
                         _id = 0,
