@@ -1,6 +1,5 @@
 package kr.musekee.faremeter.screens
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,8 +49,11 @@ import kr.musekee.faremeter.components.main.RecordDialogContainer
 import kr.musekee.faremeter.components.main.RecordItem
 import kr.musekee.faremeter.datas.transportations
 import kr.musekee.faremeter.libs.DatabaseHelper
+import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.libs.RecordDao
 import kr.musekee.faremeter.libs.RecordData
+import kr.musekee.faremeter.libs.cutForSpeed
+import kr.musekee.faremeter.libs.toSpeedUnit
 import kr.musekee.faremeter.ui.theme.lineSeedKr
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -61,6 +63,7 @@ import java.util.concurrent.TimeUnit
 
 @Composable
 fun Results() {
+    val prefManager = PrefManager(LocalContext.current)
     val scrollState = rememberScrollState()
     var dialogEnabled by remember { mutableStateOf(false) }
     var dialogData by remember { mutableStateOf(RecordData(1, "서울특별시", "TAXI", Date(), Date(), 10000, 30f, 100f, 50.51)) }
@@ -102,7 +105,7 @@ fun Results() {
                     .fillMaxWidth()
                     .width(300.dp)
                     .height(500.dp)
-                    .padding(20.dp),
+                    .padding(10.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0xFF202020)
                 ),
@@ -139,7 +142,9 @@ fun Results() {
                             .padding(vertical = 15.dp)
                             .fillMaxWidth()
                     )
-                    Row {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
                         RecordDialogContainer(
                             title = "시간"
                         ) {
@@ -147,15 +152,13 @@ fun Results() {
                                 modifier = Modifier
                                     .size(100.dp)
                             ) {
-                                // ? 아니 뭐임
-                                // 10시 - 16시 하니까 반대로 잡히네???
                                 //region 원 그래프
                                 Canvas(
                                     modifier = Modifier
                                         .size(100.dp)
                                 ) {
                                     // 1분 당 0.5도
-                                    val startAngle = (convertToMinutes(dialogData.startTime) / 2f) - 90
+                                    val startAngle = (convertToMinutes(dialogData.startTime) / 2f) - 90 // 기본 0도는 3시 방향인 듯...
                                     val endAngle = (convertToMinutes(dialogData.endTime) / 2f) - 90
                                     val sweepAngle = if (endAngle >= startAngle) {
                                         endAngle - startAngle
@@ -169,8 +172,12 @@ fun Results() {
                                     val centerX = size.width / 2f
                                     val centerY = radius + strokeWidth / 2
 
-                                    Log.d("Records", "$startAngle, $endAngle")
-
+                                    // 배경
+                                    drawCircle(
+                                        color = Color(0xFF0A0A0A),
+                                        radius = 50.dp.toPx()
+                                    )
+                                    // 게이지 배경
                                     drawArc(
                                         color = Color(0xFF353535),
                                         startAngle = 0f,
@@ -180,9 +187,10 @@ fun Results() {
                                         topLeft = Offset(centerX - radius, centerY - radius),
                                         size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2)
                                     )
+                                    // 게이지 값
                                     drawArc(
                                         color = transportationColor,
-                                        startAngle = startAngle, // 기본 0도는 3시 방향인 듯...
+                                        startAngle = startAngle,
                                         sweepAngle = sweepAngle,
                                         useCenter = false,
                                         style = Stroke(width = strokeWidth),
@@ -241,6 +249,96 @@ fun Results() {
                                         color = transportationColor
                                     )
                                     //endregion
+                                }
+                                //endregion
+                            }
+                        }
+                        RecordDialogContainer(
+                            title = "속도"
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(100.dp)
+                            ) {
+                                //region 원 그래프
+                                Canvas(
+                                    modifier = Modifier
+                                        .size(100.dp)
+                                ) {
+                                    val startAngle = 225f - 90f
+                                    val sweepAngle = (dialogData.averageSpeed / dialogData.topSpeed) * 270
+
+                                    val strokeWidth = 7.5.dp.toPx()
+                                    val radius = (100.dp.toPx() - strokeWidth) / 2
+
+                                    val centerX = size.width / 2f
+                                    val centerY = radius + strokeWidth / 2
+
+                                    // 배경
+                                    drawCircle(
+                                        color = Color(0xFF0A0A0A),
+                                        radius = 50.dp.toPx()
+                                    )
+                                    // 게이지 배경
+                                    drawArc(
+                                        color = Color(0xFFF44242),
+                                        startAngle = startAngle,
+                                        sweepAngle = 270f,
+                                        useCenter = false,
+                                        style = Stroke(width = strokeWidth),
+                                        topLeft = Offset(centerX - radius, centerY - radius),
+                                        size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2)
+                                    )
+                                    // 값
+                                    drawArc(
+                                        color = transportationColor,
+                                        startAngle = startAngle,
+                                        sweepAngle = sweepAngle,
+                                        useCenter = false,
+                                        style = Stroke(width = strokeWidth),
+                                        topLeft = Offset(centerX - radius, centerY - radius),
+                                        size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2)
+                                    )
+                                }
+                                //endregion
+                                //region 원 그래프 내 속도 텍스트
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .wrapContentWidth(align = Alignment.CenterHorizontally)
+                                        .wrapContentHeight(align = Alignment.CenterVertically),
+                                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                                ) {
+                                    val annotatedSpeedString = buildAnnotatedString {
+                                        withStyle(SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
+                                            append(dialogData.averageSpeed.toSpeedUnit(prefManager.speedUnit).cutForSpeed(0).toInt().toString())
+                                        }
+                                        withStyle(SpanStyle(fontSize = 12.sp)) {
+                                            append(" ${prefManager.speedUnit}\n")
+                                        }
+                                        withStyle(SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
+                                            append(dialogData.topSpeed.toSpeedUnit(prefManager.speedUnit).cutForSpeed(0).toInt().toString())
+                                        }
+                                        withStyle(SpanStyle(fontSize = 12.sp)) {
+                                            append(" ${prefManager.speedUnit}")
+                                        }
+                                    }
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        text = "표정/최고속도",
+                                        fontFamily = lineSeedKr,
+                                        fontSize = 10.sp
+                                    )
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        text = annotatedSpeedString,
+                                        fontFamily = lineSeedKr,
+                                        color = Color(0xFFFFFFFF),
+                                        textAlign = TextAlign.Center
+                                    )
                                 }
                                 //endregion
                             }
