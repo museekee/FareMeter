@@ -85,7 +85,7 @@ object TaxiCalc {
         speed.value = curSpeed
 
         val curDistance = speed.value * deltaTime
-        distance.value += curDistance
+        distance.value += curDistance // m
 
         counter.value -= if (speed.value <= 4.2) { // 약 15km/h보다 느릴 때 (시간 요금 + 거리 요금), 택시일 때
             fareType.value = FareType.TIME

@@ -20,7 +20,7 @@ object MeterUtil {
     private val taxiCalc = TaxiCalc
 
     var fare: MutableState<Int> = mutableIntStateOf(0)
-    var distance: MutableState<Double> = mutableDoubleStateOf(0.0)
+    var distance: MutableState<Double> = mutableDoubleStateOf(0.0) // m
     var speed: MutableState<Float> = mutableFloatStateOf(0.0f)
     var gpsStatus: MutableState<GPSStatus> = mutableStateOf(GPSStatus.UNSTABLE)
 

@@ -25,6 +25,9 @@ val transportations = listOf(
 //    KTX,
 //    SRT
 )
+fun getTransportationById(id: String): Transportation {
+    return transportations.find { it.id == id } ?: unknownTransportation
+}
 
 data class Transportation(
     val id: String, // TAXI

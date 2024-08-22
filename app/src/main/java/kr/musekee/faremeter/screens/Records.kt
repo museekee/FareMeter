@@ -47,7 +47,8 @@ import kr.musekee.faremeter.R
 import kr.musekee.faremeter.components.main.MainTitle
 import kr.musekee.faremeter.components.main.RecordDialogContainer
 import kr.musekee.faremeter.components.main.RecordItem
-import kr.musekee.faremeter.datas.transportations
+import kr.musekee.faremeter.components.main.RecordOtherInfo
+import kr.musekee.faremeter.datas.getTransportationById
 import kr.musekee.faremeter.libs.DatabaseHelper
 import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.libs.RecordDao
@@ -97,7 +98,8 @@ fun Results() {
         Dialog(onDismissRequest = {
             dialogEnabled = false
         }) {
-            val transportationColor = transportations.find { it.id == dialogData.transportation }?.color ?: Color(0xFFFFFFFF)
+            val transportation = getTransportationById(dialogData.transportation)
+            val transportationColor = transportation.color
             val startTime = dialogData.startTime
             val endTime = dialogData.endTime
             Card(
@@ -142,6 +144,7 @@ fun Results() {
                             .padding(vertical = 15.dp)
                             .fillMaxWidth()
                     )
+                    //region 그래프들
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
@@ -337,13 +340,116 @@ fun Results() {
                                         text = annotatedSpeedString,
                                         fontFamily = lineSeedKr,
                                         color = Color(0xFFFFFFFF),
-                                        textAlign = TextAlign.Center
+                                        textAlign = TextAlign.Center,
+                                        lineHeight = 18.sp
                                     )
                                 }
                                 //endregion
                             }
                         }
                     }
+                    //endregion
+                    //region 기타 정보
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        RecordOtherInfo(
+                            name = "교통수단",
+                            value = stringResource(transportation.label),
+                            icon = transportation.icon,
+                            iconColor = transportationColor
+                        )
+                        RecordOtherInfo(
+                            name = "이동 거리",
+                            value = "${(dialogData.distance/1000).cutForSpeed(1)} km"
+                        )
+                        RecordOtherInfo(
+                            name = "요금 체계",
+                            value = dialogData.fareCalcType
+                        )
+                        val calendar = Calendar.getInstance()
+                        calendar.time = dialogData.startTime
+                        val annotatedStartTime = buildAnnotatedString {
+                            withStyle(SpanStyle(fontSize = 12.sp)) {
+                                append("${calendar.get(Calendar.YEAR)}년 ")
+                            }
+                            withStyle(SpanStyle(fontSize = 15.sp)) {
+                                append("${calendar.get(Calendar.MONTH)+1}")
+                            }
+                            withStyle(SpanStyle(fontSize = 12.sp)) {
+                                append("월 ")
+                            }
+                            withStyle(SpanStyle(fontSize = 15.sp)) {
+                                append("${calendar.get(Calendar.DAY_OF_MONTH)}")
+                            }
+                            withStyle(SpanStyle(fontSize = 12.sp)) {
+                                append("일\n")
+                            }
+                            withStyle(SpanStyle(fontSize = 15.sp)) {
+                                append("${calendar.get(Calendar.HOUR)}")
+                            }
+                            withStyle(SpanStyle(fontSize = 12.sp)) {
+                                append("시 ")
+                            }
+                            withStyle(SpanStyle(fontSize = 15.sp)) {
+                                append("${calendar.get(Calendar.MINUTE)}")
+                            }
+                            withStyle(SpanStyle(fontSize = 12.sp)) {
+                                append("분 ")
+                            }
+                            withStyle(SpanStyle(fontSize = 15.sp)) {
+                                append("${calendar.get(Calendar.SECOND)}")
+                            }
+                            withStyle(SpanStyle(fontSize = 12.sp)) {
+                                append("초")
+                            }
+                        }
+                        RecordOtherInfo(
+                            name = "출발 시간",
+                            annotatedValue = annotatedStartTime
+                        )
+                        calendar.time = dialogData.endTime
+                        val annotatedEndTime = buildAnnotatedString {
+                            withStyle(SpanStyle(fontSize = 12.sp)) {
+                                append("${calendar.get(Calendar.YEAR)}년 ")
+                            }
+                            withStyle(SpanStyle(fontSize = 15.sp)) {
+                                append("${calendar.get(Calendar.MONTH)+1}")
+                            }
+                            withStyle(SpanStyle(fontSize = 12.sp)) {
+                                append("월 ")
+                            }
+                            withStyle(SpanStyle(fontSize = 15.sp)) {
+                                append("${calendar.get(Calendar.DAY_OF_MONTH)}")
+                            }
+                            withStyle(SpanStyle(fontSize = 12.sp)) {
+                                append("일\n")
+                            }
+                            withStyle(SpanStyle(fontSize = 15.sp)) {
+                                append("${calendar.get(Calendar.HOUR)}")
+                            }
+                            withStyle(SpanStyle(fontSize = 12.sp)) {
+                                append("시 ")
+                            }
+                            withStyle(SpanStyle(fontSize = 15.sp)) {
+                                append("${calendar.get(Calendar.MINUTE)}")
+                            }
+                            withStyle(SpanStyle(fontSize = 12.sp)) {
+                                append("분 ")
+                            }
+                            withStyle(SpanStyle(fontSize = 15.sp)) {
+                                append("${calendar.get(Calendar.SECOND)}")
+                            }
+                            withStyle(SpanStyle(fontSize = 12.sp)) {
+                                append("초")
+                            }
+                        }
+                        RecordOtherInfo(
+                            name = "도착 시간",
+                            annotatedValue = annotatedEndTime
+                        )
+                    }
+                    //endregion
                 }
             }
         }

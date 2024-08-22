@@ -59,20 +59,20 @@ fun SelectTransportation() {
             Button(
                 onClick = {
                     val calendar = Calendar.getInstance()
-                    calendar.set(2024, Calendar.AUGUST, 17, 22, 48, 31)
+                    calendar.set(2024, Calendar.AUGUST, 22, 23, 15, 51)
                     val startTime = calendar.time
-                    calendar.set(2024, Calendar.AUGUST, 18, 3, 51, 46)
+                    calendar.set(2024, Calendar.AUGUST, 23, 0, 12, 27)
                     val endTime = calendar.time
                     recordDao.saveData(RecordData(
                         _id = 0,
-                        fareCalcType = "서울특별시",
+                        fareCalcType = "경기도",
                         transportation = taxi.id,
                         startTime = startTime,
                         endTime = endTime,
-                        fare = 24600,
-                        averageSpeed = 42.5f,
-                        topSpeed = 98.2f,
-                        distance = 164.75
+                        fare = 48653,
+                        averageSpeed = 15.5f,
+                        topSpeed = 31.2f,
+                        distance = 126373.47
                     ))
                 },
                 enabled = false
