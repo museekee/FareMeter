@@ -169,6 +169,8 @@ fun Results() {
                                         endAngle - startAngle + 360 // 360도를 더해 시계 방향으로
                                     }
 
+                                    val isFullSizeValue = (dialogData.endTime.time - dialogData.startTime.time) / 1000 >= 43200
+
                                     val strokeWidth = 7.5.dp.toPx()
                                     val radius = (100.dp.toPx() - strokeWidth) / 2
 
@@ -191,15 +193,26 @@ fun Results() {
                                         size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2)
                                     )
                                     // 게이지 값
-                                    drawArc(
-                                        color = transportationColor,
-                                        startAngle = startAngle,
-                                        sweepAngle = sweepAngle,
-                                        useCenter = false,
-                                        style = Stroke(width = strokeWidth),
-                                        topLeft = Offset(centerX - radius, centerY - radius),
-                                        size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2)
-                                    )
+                                    if (!isFullSizeValue)
+                                        drawArc(
+                                            color = transportationColor,
+                                            startAngle = startAngle,
+                                            sweepAngle = sweepAngle,
+                                            useCenter = false,
+                                            style = Stroke(width = strokeWidth),
+                                            topLeft = Offset(centerX - radius, centerY - radius),
+                                            size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2)
+                                        )
+                                    else
+                                        drawArc(
+                                            color = transportationColor,
+                                            startAngle = 0f,
+                                            sweepAngle = 360f,
+                                            useCenter = false,
+                                            style = Stroke(width = strokeWidth),
+                                            topLeft = Offset(centerX - radius, centerY - radius),
+                                            size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2)
+                                        )
                                 }
                                 //endregion
                                 //region 원 그래프 내 시간 텍스트
