@@ -21,6 +21,12 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
         return db.insert("Records", null, cv)
     }
 
+    fun deleteData(id: Int) {
+        val db = dbHelper.readableDatabase
+        db.delete("Records", "_ID = $id", null)
+        db.close()
+    }
+
     fun getAllData(transportation: String?, limit: Int?): MutableList<RecordData> {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery("select * from Records", null)

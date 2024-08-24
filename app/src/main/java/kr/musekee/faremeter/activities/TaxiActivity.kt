@@ -72,6 +72,7 @@ class TaxiActivity : ComponentActivity() {
 
                 var useIntercity by remember { mutableStateOf(false) }
                 var useNight by remember { mutableStateOf(false) }
+                var dialogEnabled by remember { mutableStateOf(false) }
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -103,6 +104,7 @@ class TaxiActivity : ComponentActivity() {
                             label = "도착",
                             onClick = {
                                 stopService(Intent(this@TaxiActivity, LocationService::class.java))
+                                dialogEnabled = true
                             }
                         )
                         TaxiButton(
@@ -248,6 +250,17 @@ class TaxiActivity : ComponentActivity() {
                         )
                     }
                 }
+                if (dialogEnabled) {
+                    // 나중에 db를 orderby할 수 있는 기능이 나오면 날짜 역순으로 해서 가장 위 row를 가져와서 넣을거임.
+                }
+//                    RecordDialog(
+//                        data = dialogData,
+//                        onDismiss = { dialogEnabled = false },
+//                        onDeleteButtonClick = {
+//                            recordDao.deleteData(dialogData._id)
+//                        },
+//                        onCloseBtnClick = {}
+//                    )
             }
         }
     }
