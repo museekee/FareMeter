@@ -48,7 +48,6 @@ import kr.musekee.faremeter.components.taxi.TaxiButtonColor
 import kr.musekee.faremeter.components.taxi.TaxiHorse
 import kr.musekee.faremeter.datas.taxi
 import kr.musekee.faremeter.libs.DatabaseHelper
-import kr.musekee.faremeter.libs.GPSStatus
 import kr.musekee.faremeter.libs.LocationService
 import kr.musekee.faremeter.libs.MeterUtil
 import kr.musekee.faremeter.libs.PrefManager
@@ -161,19 +160,20 @@ class TaxiActivity : ComponentActivity() {
                                     },
                                     tint = Color.White
                                 )
-                                Icon(
-                                    modifier = Modifier
-                                        .size(40.dp),
-                                    imageVector = when (MeterUtil.gpsStatus.value) {
-                                        GPSStatus.STABLE -> ImageVector.vectorResource(id = R.drawable.ic_satellite)
-                                        GPSStatus.UNSTABLE -> ImageVector.vectorResource(id = R.drawable.ic_satellite_no)
-                                    },
-                                    contentDescription = when (MeterUtil.gpsStatus.value) {
-                                        GPSStatus.STABLE -> "GPS 연결됨"
-                                        GPSStatus.UNSTABLE -> "GPS 연결 안됨"
-                                    },
-                                    tint = Color.White
-                                )
+                                // GPS는 나도 잘 모르겠음
+//                                Icon(
+//                                    modifier = Modifier
+//                                        .size(40.dp),
+//                                    imageVector = when (MeterUtil.gpsStatus.value) {
+//                                        GPSStatus.STABLE -> ImageVector.vectorResource(id = R.drawable.ic_satellite)
+//                                        GPSStatus.UNSTABLE -> ImageVector.vectorResource(id = R.drawable.ic_satellite_no)
+//                                    },
+//                                    contentDescription = when (MeterUtil.gpsStatus.value) {
+//                                        GPSStatus.STABLE -> "GPS 연결됨"
+//                                        GPSStatus.UNSTABLE -> "GPS 연결 안됨"
+//                                    },
+//                                    tint = Color.White
+//                                )
                             }
                             TaxiHorse(
                                 speed = TaxiCalc.speed.value.toSpeedUnit("km/h")
