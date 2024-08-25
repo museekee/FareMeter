@@ -59,8 +59,6 @@ class LocationService : Service(), LocationListenerCompat {
     }
     override fun onDestroy() {
         super.onDestroy()
-        MeterUtil.resetValues()
-        locationManager.removeUpdates(this)
         RecordDao(DatabaseHelper(this)).saveData(
             RecordData(
                 _id = 0,
@@ -74,6 +72,9 @@ class LocationService : Service(), LocationListenerCompat {
                 distance = MeterUtil.distance.value
             )
         )
+
+        locationManager.removeUpdates(this)
+        MeterUtil.resetValues()
         stopForeground(STOP_FOREGROUND_REMOVE)
     }
     override fun onLocationChanged(location: Location) {
