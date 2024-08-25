@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -68,12 +70,15 @@ fun RecordDialog(
         val transportationColor = transportation.color
         val startTime = data.startTime
         val endTime = data.endTime
+        val scrollState = rememberScrollState()
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .width(300.dp)
-                .height(550.dp)
-                .padding(10.dp),
+                .height(560.dp)
+                .padding(10.dp)
+                .verticalScroll(scrollState),
             colors = CardDefaults.cardColors(
                 containerColor = Color(0xFF202020)
             ),
@@ -81,7 +86,6 @@ fun RecordDialog(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
                     .padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
@@ -437,6 +441,7 @@ fun RecordDialog(
                     Button(
                         modifier = Modifier
                             .width(90.dp)
+                            .height(45.dp)
                             .border(
                                 width = 1.dp,
                                 color = Color(0xFFD32F2F),
@@ -462,6 +467,7 @@ fun RecordDialog(
                     Button(
                         modifier = Modifier
                             .width(90.dp)
+                            .height(45.dp)
                             .border(
                                 width = 4.dp,
                                 color = Color(0xFF0091EA),

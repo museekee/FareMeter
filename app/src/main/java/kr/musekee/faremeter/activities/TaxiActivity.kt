@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,14 +42,17 @@ import androidx.compose.ui.unit.sp
 import kr.musekee.faremeter.R
 import kr.musekee.faremeter.activities.ui.theme.FareMeterTheme
 import kr.musekee.faremeter.components.KeepScreenOn
+import kr.musekee.faremeter.components.RecordDialog
 import kr.musekee.faremeter.components.taxi.TaxiButton
 import kr.musekee.faremeter.components.taxi.TaxiButtonColor
 import kr.musekee.faremeter.components.taxi.TaxiHorse
 import kr.musekee.faremeter.datas.taxi
+import kr.musekee.faremeter.libs.DatabaseHelper
 import kr.musekee.faremeter.libs.GPSStatus
 import kr.musekee.faremeter.libs.LocationService
 import kr.musekee.faremeter.libs.MeterUtil
 import kr.musekee.faremeter.libs.PrefManager
+import kr.musekee.faremeter.libs.RecordDao
 import kr.musekee.faremeter.libs.SetLandscape
 import kr.musekee.faremeter.libs.toSpeedUnit
 import kr.musekee.faremeter.transportationCalc.FareType
@@ -251,16 +255,21 @@ class TaxiActivity : ComponentActivity() {
                     }
                 }
                 if (dialogEnabled) {
-                    // 나중에 db를 orderby할 수 있는 기능이 나오면 날짜 역순으로 해서 가장 위 row를 가져와서 넣을거임.
+                    val recordDao = RecordDao(DatabaseHelper(LocalContext.current))
+                    val dialogData = recordDao
+                        .getAllData()
+                        .orderBy("END_TIME", "DESC")
+                        .limit(1)
+                        .execute()[0]
+                    RecordDialog(
+                        data = dialogData,
+                        onDismiss = { dialogEnabled = false },
+                        onDeleteButtonClick = {
+                            recordDao.deleteData(dialogData._id)
+                        },
+                        onCloseBtnClick = {}
+                    )
                 }
-//                    RecordDialog(
-//                        data = dialogData,
-//                        onDismiss = { dialogEnabled = false },
-//                        onDeleteButtonClick = {
-//                            recordDao.deleteData(dialogData._id)
-//                        },
-//                        onCloseBtnClick = {}
-//                    )
             }
         }
     }
