@@ -9,7 +9,7 @@ fun Number.toSpeedUnit(speedUnit: String): Double {
         else -> msToKmh(this)
     }
 }
-fun Number.cutForSpeed(digits: Int): Double {
+fun Number.cutForDecimal(digits: Int): Double {
     return if (digits == 0)
         Math.round(this.toDouble()).toDouble()
     else

@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kr.musekee.faremeter.datas.transportations
 import kr.musekee.faremeter.datas.unknownTransportation
-import kr.musekee.faremeter.libs.cutForSpeed
-import kr.musekee.faremeter.screens.bottomBorder
+import kr.musekee.faremeter.libs.bottomBorder
+import kr.musekee.faremeter.libs.cutForDecimal
 import kr.musekee.faremeter.ui.theme.lineSeedKr
 import kr.musekee.faremeter.ui.theme.nanumGothic
 import java.util.Date
@@ -83,7 +83,7 @@ fun RecordItem(
                 fontSize = 25.sp
             )
             Text(
-                text = "${(distance/1000).cutForSpeed(1)} km",
+                text = "${(distance/1000).cutForDecimal(1)} km",
                 fontFamily = lineSeedKr,
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp

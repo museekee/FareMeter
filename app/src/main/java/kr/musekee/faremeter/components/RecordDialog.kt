@@ -45,12 +45,12 @@ import kr.musekee.faremeter.components.main.RecordOtherInfo
 import kr.musekee.faremeter.datas.getTransportationById
 import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.libs.RecordData
-import kr.musekee.faremeter.libs.cutForSpeed
+import kr.musekee.faremeter.libs.cutForDecimal
 import kr.musekee.faremeter.libs.toSpeedUnit
-import kr.musekee.faremeter.screens.convertToMinutes
 import kr.musekee.faremeter.ui.theme.lineSeedKr
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -297,13 +297,13 @@ fun RecordDialog(
                             ) {
                                 val annotatedSpeedString = buildAnnotatedString {
                                     withStyle(SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
-                                        append(data.averageSpeed.toSpeedUnit(prefManager.speedUnit).cutForSpeed(0).toInt().toString())
+                                        append(data.averageSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
                                     }
                                     withStyle(SpanStyle(fontSize = 12.sp)) {
                                         append(" ${prefManager.speedUnit}\n")
                                     }
                                     withStyle(SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
-                                        append(data.topSpeed.toSpeedUnit(prefManager.speedUnit).cutForSpeed(0).toInt().toString())
+                                        append(data.topSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
                                     }
                                     withStyle(SpanStyle(fontSize = 12.sp)) {
                                         append(" ${prefManager.speedUnit}")
@@ -344,7 +344,7 @@ fun RecordDialog(
                     )
                     RecordOtherInfo(
                         name = "이동 거리",
-                        value = "${(data.distance/1000).cutForSpeed(1)} km"
+                        value = "${(data.distance/1000).cutForDecimal(1)} km"
                     )
                     RecordOtherInfo(
                         name = "요금 체계",
@@ -494,4 +494,14 @@ fun RecordDialog(
             }
         }
     }
+}
+
+fun convertToMinutes(date: Date): Int {
+    val calendar = Calendar.getInstance()
+    calendar.time = date
+
+    val hour = calendar.get(Calendar.HOUR_OF_DAY) % 12
+    val minute = calendar.get(Calendar.MINUTE)
+
+    return hour * 60 + minute
 }

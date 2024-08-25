@@ -33,9 +33,11 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
         private var orderBy: String? = null
         private var limit: String? = null
 
-        fun transportation(transportation: String): DataQueryBuilder {
-            selection = "TRANSPORTATION = ?"
-            selectionArgs = arrayOf(transportation)
+        fun transportation(transportation: String?): DataQueryBuilder {
+            if (transportation != null) {
+                selection = "TRANSPORTATION = ?"
+                selectionArgs = arrayOf(transportation)
+            }
             return this
         }
 
@@ -46,6 +48,7 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
 
         fun limit(limit: Int): DataQueryBuilder {
             this.limit = limit.toString()
+            if (limit == 0) this.limit = null
             return this
         }
 

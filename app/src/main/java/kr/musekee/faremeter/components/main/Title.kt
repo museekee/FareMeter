@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kr.musekee.faremeter.screens.bottomBorder
+import kr.musekee.faremeter.libs.bottomBorder
 import kr.musekee.faremeter.ui.theme.lineSeedKr
 
 @Composable
