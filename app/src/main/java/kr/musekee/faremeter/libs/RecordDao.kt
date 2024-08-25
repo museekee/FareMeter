@@ -27,28 +27,65 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
         db.close()
     }
 
-    fun getAllData(transportation: String?, limit: Int?): MutableList<RecordData> {
-        val db = dbHelper.readableDatabase
-        val cursor = db.rawQuery("select * from Records", null)
-        val data = mutableListOf<RecordData>()
-        cursor.use {
-            if (it.moveToFirst())
-                do {
-                    data += RecordData(
-                        _id = it.getInt(it.getColumnIndexOrThrow("_ID")),
-                        fareCalcType = it.getString(it.getColumnIndexOrThrow("FARE_CALC_TYPE")),
-                        transportation = it.getString(it.getColumnIndexOrThrow("TRANSPORTATION")),
-                        startTime = dateFormat.parse(it.getString(it.getColumnIndexOrThrow("START_TIME"))) ?: Date(System.currentTimeMillis()),
-                        endTime = dateFormat.parse(it.getString(it.getColumnIndexOrThrow("END_TIME"))) ?: Date(System.currentTimeMillis()),
-                        fare = it.getInt(it.getColumnIndexOrThrow("FARE")),
-                        averageSpeed = it.getFloat(it.getColumnIndexOrThrow("AVERAGE_SPEED")),
-                        topSpeed = it.getFloat(it.getColumnIndexOrThrow("TOP_SPEED")),
-                        distance = it.getDouble(it.getColumnIndexOrThrow("DISTANCE")),
-                    )
-                }
-                while (it.moveToNext())
-            it.close()
+    inner class DataQueryBuilder {
+        private var selection: String? = null
+        private var selectionArgs: Array<String>? = null
+        private var orderBy: String? = null
+        private var limit: String? = null
+
+        fun transportation(transportation: String): DataQueryBuilder {
+            selection = "TRANSPORTATION = ?"
+            selectionArgs = arrayOf(transportation)
+            return this
         }
-        return data
+
+        fun orderBy(column: String, direction: String = "ASC"): DataQueryBuilder {
+            orderBy = "$column $direction"
+            return this
+        }
+
+        fun limit(limit: Int): DataQueryBuilder {
+            this.limit = limit.toString()
+            return this
+        }
+
+        fun execute(): List<RecordData> {
+            val db = dbHelper.readableDatabase
+            val cursor = db.query(
+                "Records",
+                null, // columns (null means all columns)
+                selection,
+                selectionArgs,
+                null, // groupBy
+                null, // having
+                orderBy,
+                limit
+            )
+
+            val data = mutableListOf<RecordData>()
+            cursor.use {
+                if (it.moveToFirst())
+                    do {
+                        data += RecordData(
+                            _id = it.getInt(it.getColumnIndexOrThrow("_ID")),
+                            fareCalcType = it.getString(it.getColumnIndexOrThrow("FARE_CALC_TYPE")),
+                            transportation = it.getString(it.getColumnIndexOrThrow("TRANSPORTATION")),
+                            startTime = dateFormat.parse(it.getString(it.getColumnIndexOrThrow("START_TIME")))
+                                ?: Date(System.currentTimeMillis()),
+                            endTime = dateFormat.parse(it.getString(it.getColumnIndexOrThrow("END_TIME")))
+                                ?: Date(System.currentTimeMillis()),
+                            fare = it.getInt(it.getColumnIndexOrThrow("FARE")),
+                            averageSpeed = it.getFloat(it.getColumnIndexOrThrow("AVERAGE_SPEED")),
+                            topSpeed = it.getFloat(it.getColumnIndexOrThrow("TOP_SPEED")),
+                            distance = it.getDouble(it.getColumnIndexOrThrow("DISTANCE")),
+                        )
+                    } while (it.moveToNext())
+                it.close()
+            }
+            return data
+        }
+    }
+    fun getAllData(): DataQueryBuilder {
+        return DataQueryBuilder()
     }
 }

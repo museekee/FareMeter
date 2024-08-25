@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -23,6 +24,7 @@ import kr.musekee.faremeter.R
 import kr.musekee.faremeter.components.RecordDialog
 import kr.musekee.faremeter.components.main.MainTitle
 import kr.musekee.faremeter.components.main.RecordItem
+import kr.musekee.faremeter.datas.taxi
 import kr.musekee.faremeter.libs.DatabaseHelper
 import kr.musekee.faremeter.libs.RecordDao
 import kr.musekee.faremeter.libs.RecordData
@@ -35,24 +37,31 @@ fun Results() {
     var dialogEnabled by remember { mutableStateOf(false) }
     var dialogData by remember { mutableStateOf(RecordData(1, "서울특별시", "TAXI", Date(), Date(), 10000, 30f, 100f, 50.51)) }
     val recordDao = RecordDao(DatabaseHelper(LocalContext.current))
+    var limit by remember { mutableIntStateOf(50) }
+    var transportation by remember { mutableStateOf(taxi.id) } // 전체 보기는 null
+    var dateOrder by remember { mutableStateOf("DESC") }
 
     Column {
         MainTitle(
             title = stringResource(id = R.string.Results)
         )
-        Row {
+        Row { // 여기서 정렬 방식 선택, #dp tdp fWeight ddp
 
         }
-        Column(
+        Column( // lazycolumn으로 바꾸고
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .verticalScroll(scrollState)
         ) {
-            recordDao.getAllData(
-                transportation = null,
-                limit = null
-            ).mapIndexed { index, it ->
+            // #에서 limit 설정하기
+            // 일단 운임은 orderby 빼자.
+            recordDao.getAllData()
+                .limit(limit)
+                .transportation(transportation)
+                .orderBy("END_TIME", dateOrder)
+                .execute()
+                .mapIndexed { index, it ->
                 RecordItem(index, it.transportation, it.fare, it.distance, it.endTime) {
                     dialogData = it
                     dialogEnabled = true
