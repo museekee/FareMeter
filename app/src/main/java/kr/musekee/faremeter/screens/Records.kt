@@ -161,13 +161,11 @@ fun Results() {
                 .verticalScroll(scrollState)
         ) {
             // #에서 limit 설정하기
-            // 일단 운임은 orderby 빼자.
             recordDao.getAllData()
                 .limit(limit)
                 .transportation(transportation)
                 .orderBy("END_TIME", dateOrder)
-                .execute()
-                .mapIndexed { index, it ->
+                .execute().mapIndexed { index, it ->
                 RecordItem(index, it.transportation, it.fare, it.distance, it.endTime) {
                     dialogData = it
                     dialogEnabled = true

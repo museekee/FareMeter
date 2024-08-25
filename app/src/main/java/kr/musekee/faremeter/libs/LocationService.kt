@@ -90,12 +90,11 @@ class LocationService : Service(), LocationListenerCompat {
 
     @Deprecated("Deprecated in Java")
     override fun onStatusChanged(provider: String, status: Int, extras: Bundle?) {
-        MeterUtil.gpsStatus.value = if (status == LocationProvider.OUT_OF_SERVICE)
-            GPSStatus.UNSTABLE
-        else if (status == LocationProvider.TEMPORARILY_UNAVAILABLE)
-            GPSStatus.UNSTABLE
-        else
-            GPSStatus.STABLE
+        MeterUtil.gpsStatus.value = when (status) {
+            LocationProvider.OUT_OF_SERVICE -> GPSStatus.UNSTABLE
+            LocationProvider.TEMPORARILY_UNAVAILABLE -> GPSStatus.UNSTABLE
+            else -> GPSStatus.STABLE
+        }
         super.onStatusChanged(provider, status, extras)
     }
 
