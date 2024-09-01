@@ -48,6 +48,7 @@ import kr.musekee.faremeter.components.taxi.TaxiButtonColor
 import kr.musekee.faremeter.components.taxi.TaxiHorse
 import kr.musekee.faremeter.datas.taxi
 import kr.musekee.faremeter.libs.DatabaseHelper
+import kr.musekee.faremeter.libs.GPSStatus
 import kr.musekee.faremeter.libs.LocationService
 import kr.musekee.faremeter.libs.MeterUtil
 import kr.musekee.faremeter.libs.PrefManager
@@ -64,10 +65,11 @@ class TaxiActivity : ComponentActivity() {
         SetLandscape(this)
         val prefManager = PrefManager(this)
 
-        MeterUtil.init(
-            transportation = taxi.id,
-            calcType = prefManager.getCalcType(taxi.id)
-        )
+        if (!LocationService.isRunning) // 잠깐 앱을 나갔다 들어 왔을 때 초기화 되는거 방지
+            MeterUtil.init(
+                transportation = taxi.id,
+                calcType = prefManager.getCalcType(taxi.id)
+            )
 
         setContent {
             FareMeterTheme {
@@ -98,6 +100,8 @@ class TaxiActivity : ComponentActivity() {
                         TaxiButton(
                             color = TaxiButtonColor.Blue,
                             label = "출발",
+                            enabled = !MeterUtil.isDriving.value,
+                            pressed = MeterUtil.isDriving.value,
                             onClick = {
                                 startService(Intent(this@TaxiActivity, LocationService::class.java))
                             }
@@ -105,6 +109,8 @@ class TaxiActivity : ComponentActivity() {
                         TaxiButton(
                             color = TaxiButtonColor.Red,
                             label = "도착",
+                            enabled = MeterUtil.isDriving.value,
+                            pressed = !MeterUtil.isDriving.value,
                             onClick = {
                                 stopService(Intent(this@TaxiActivity, LocationService::class.java))
                                 dialogEnabled = true
@@ -113,6 +119,7 @@ class TaxiActivity : ComponentActivity() {
                         TaxiButton(
                             color = TaxiButtonColor.Yellow,
                             label = "시외 할증",
+                            pressed = useIntercity,
                             onClick = {
                                 useIntercity = !useIntercity
                                 TaxiCalc.toggleIntercity(useIntercity)
@@ -121,6 +128,7 @@ class TaxiActivity : ComponentActivity() {
                         TaxiButton(
                             color = TaxiButtonColor.Green,
                             label = "야간 할증",
+                            pressed = useNight,
                             onClick = {
                                 useNight = !useNight
                                 TaxiCalc.toggleNight(useNight)
@@ -161,19 +169,19 @@ class TaxiActivity : ComponentActivity() {
                                     tint = Color.White
                                 )
                                 // GPS는 나도 잘 모르겠음
-//                                Icon(
-//                                    modifier = Modifier
-//                                        .size(40.dp),
-//                                    imageVector = when (MeterUtil.gpsStatus.value) {
-//                                        GPSStatus.STABLE -> ImageVector.vectorResource(id = R.drawable.ic_satellite)
-//                                        GPSStatus.UNSTABLE -> ImageVector.vectorResource(id = R.drawable.ic_satellite_no)
-//                                    },
-//                                    contentDescription = when (MeterUtil.gpsStatus.value) {
-//                                        GPSStatus.STABLE -> "GPS 연결됨"
-//                                        GPSStatus.UNSTABLE -> "GPS 연결 안됨"
-//                                    },
-//                                    tint = Color.White
-//                                )
+                                Icon(
+                                    modifier = Modifier
+                                        .size(40.dp),
+                                    imageVector = when (MeterUtil.gpsStatus.value) {
+                                        GPSStatus.STABLE -> ImageVector.vectorResource(id = R.drawable.ic_satellite)
+                                        GPSStatus.UNSTABLE -> ImageVector.vectorResource(id = R.drawable.ic_satellite_no)
+                                    },
+                                    contentDescription = when (MeterUtil.gpsStatus.value) {
+                                        GPSStatus.STABLE -> "GPS 연결됨"
+                                        GPSStatus.UNSTABLE -> "GPS 불안정"
+                                    },
+                                    tint = Color.White
+                                )
                             }
                             TaxiHorse(
                                 speed = TaxiCalc.speed.value.toSpeedUnit("km/h")

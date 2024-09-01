@@ -36,7 +36,7 @@ object TaxiCalc {
     val counter: MutableState<Int> = mutableIntStateOf(0)
     val distance: MutableState<Double> = mutableDoubleStateOf(0.0) // m
     val speed: MutableState<Float> = mutableFloatStateOf(0.0f) // m/s
-    val _counter: MutableState<Int> = mutableIntStateOf(0)
+    val _counter: MutableState<Int> = mutableIntStateOf(0) // counter 최대값
     val fareType: MutableState<FareType> = mutableStateOf(FareType.TIME)
 
     private var isNight = false
@@ -65,9 +65,9 @@ object TaxiCalc {
     fun resetValues() {
         fare.value = minFare
         counter.value = minDistance
+        _counter.value = counter.value
         distance.value = 0.0
         speed.value = 0.0f
-        _counter.value = minDistance
 
         isNight = false
         isIntercity = false

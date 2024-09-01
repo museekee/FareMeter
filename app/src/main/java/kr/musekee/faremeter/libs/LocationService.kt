@@ -36,6 +36,11 @@ class LocationService : Service(), LocationListenerCompat {
     private var averageSpeed: Float = 0f
     private var topSpeed: Float = 0f
 
+    override fun onCreate() {
+        super.onCreate()
+        isRunning = true
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!PermissionUtil.checkLocationPermission(this)) {
             PermissionUtil.openAppInfo(this)
@@ -46,6 +51,7 @@ class LocationService : Service(), LocationListenerCompat {
         pref = PrefManager(this)
         transportation =  pref.transportation
         fareCalcType = pref.getCalcType(transportation)
+        MeterUtil.gpsStatus.value = GPSStatus.UNSTABLE
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager.requestLocationUpdates(
@@ -54,6 +60,7 @@ class LocationService : Service(), LocationListenerCompat {
             MIN_DISTANCE_CHANGE_UPDATES,
             this
         )
+        MeterUtil.isDriving.value = true
         notiGosu(true)
         return super.onStartCommand(intent, flags, startId)
     }
@@ -72,10 +79,12 @@ class LocationService : Service(), LocationListenerCompat {
                 distance = MeterUtil.distance.value
             )
         )
+        MeterUtil.isDriving.value = false
 
         locationManager.removeUpdates(this)
         MeterUtil.resetValues()
         stopForeground(STOP_FOREGROUND_REMOVE)
+        isRunning = false
     }
     override fun onLocationChanged(location: Location) {
         MeterUtil.increaseFare(location.speed)
@@ -157,5 +166,6 @@ class LocationService : Service(), LocationListenerCompat {
     companion object {
         private const val MIN_TIME_BW_UPDATES: Long = 300 // 1000ms = 1sec
         private const val MIN_DISTANCE_CHANGE_UPDATES: Float = 0f
+        var isRunning = false
     }
 }

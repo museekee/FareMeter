@@ -28,7 +28,13 @@ import kr.musekee.faremeter.R
 import kr.musekee.faremeter.ui.theme.lineSeedKr
 
 @Composable
-fun TaxiButton(color: TaxiButtonColor, label: String, onClick: () -> Unit) {
+fun TaxiButton(
+    color: TaxiButtonColor,
+    label: String,
+    enabled: Boolean = true,
+    pressed: Boolean = false,
+    onClick: () -> Unit
+) {
     Button(
         contentPadding = PaddingValues(),
         modifier = Modifier
@@ -40,8 +46,10 @@ fun TaxiButton(color: TaxiButtonColor, label: String, onClick: () -> Unit) {
             ),
         shape = RectangleShape,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent
+            containerColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent
         ),
+        enabled = enabled,
         onClick = onClick
     ) {
         BoxWithConstraints(
@@ -52,7 +60,7 @@ fun TaxiButton(color: TaxiButtonColor, label: String, onClick: () -> Unit) {
             val height = maxHeight - 4.dp
             Image(
                 painter = painterResource(
-                    id = R.drawable.taxi_button
+                    id = if (!pressed) R.drawable.taxi_button else R.drawable.taxi_button_pressed
                 ), 
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(
@@ -68,7 +76,8 @@ fun TaxiButton(color: TaxiButtonColor, label: String, onClick: () -> Unit) {
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 text = label,
-                fontFamily = lineSeedKr
+                fontFamily = lineSeedKr,
+                color = Color(0xFF444444)
             )
         }
     }

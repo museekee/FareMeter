@@ -23,6 +23,7 @@ object MeterUtil {
     var distance: MutableState<Double> = mutableDoubleStateOf(0.0) // m
     var speed: MutableState<Float> = mutableFloatStateOf(0.0f)
     var gpsStatus: MutableState<GPSStatus> = mutableStateOf(GPSStatus.UNSTABLE)
+    var isDriving: MutableState<Boolean> = mutableStateOf(false)
 
     fun init(transportation: String, calcType: String) {
         this@MeterUtil.transportation = transportation
@@ -42,6 +43,7 @@ object MeterUtil {
             taxi.id -> taxiCalc.increaseFare(curSpeed)
             else -> Triple(mutableIntStateOf(0), mutableDoubleStateOf(0.0), mutableFloatStateOf(0.0f))
         }
+        gpsStatus.value = GPSStatus.STABLE
         fare.value = mFare.value
         distance.value = mDistance.value
         speed.value = mSpeed.value
