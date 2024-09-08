@@ -19,7 +19,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 FARE INTEGER,
                 AVERAGE_SPEED REAL,
                 TOP_SPEED REAL,
-                DISTANCE REAL
+                DISTANCE REAL,
+                LATITUDES TEXT,
+                LONGITUDES TEXT
             );
         """.trimIndent()
         sqLiteDatabase.execSQL(createRecordTable)

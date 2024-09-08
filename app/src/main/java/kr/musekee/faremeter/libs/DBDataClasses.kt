@@ -11,5 +11,7 @@ data class RecordData(
     val fare: Int, // 운임
     val averageSpeed: Float, // 평균 속도 m/s
     val topSpeed: Float, // 최고 속도 m/s
-    val distance: Double // 거리 m
+    val distance: Double, // 거리 m
+    val latitudes: List<Double>, // 위도 리스트
+    val longitudes: List<Double> // 경도 리스트
 )

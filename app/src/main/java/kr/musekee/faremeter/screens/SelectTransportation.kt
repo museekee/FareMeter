@@ -72,7 +72,9 @@ fun SelectTransportation() {
                         fare = 48653,
                         averageSpeed = 15.5f,
                         topSpeed = 31.2f,
-                        distance = 126373.47
+                        distance = 126373.47,
+                        latitudes = listOf(0.0),
+                        longitudes = listOf(0.0)
                     ))
                 },
                 enabled = false

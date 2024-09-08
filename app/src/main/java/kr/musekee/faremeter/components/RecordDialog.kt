@@ -40,6 +40,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import kr.musekee.faremeter.components.main.MyKakaoMap
 import kr.musekee.faremeter.components.main.RecordDialogContainer
 import kr.musekee.faremeter.components.main.RecordOtherInfo
 import kr.musekee.faremeter.datas.getTransportationById
@@ -431,6 +432,8 @@ fun RecordDialog(
                         name = "도착 시간",
                         annotatedValue = annotatedEndTime
                     )
+
+                    MyKakaoMap(Modifier, 0.0, 0.0)
                 }
                 //endregion
                 Row(

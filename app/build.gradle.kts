@@ -1,7 +1,20 @@
+import java.util.Properties
+
+buildscript{
+    dependencies {
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.51.1")
+    }
+}
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "kr.musekee.faremeter"
@@ -18,6 +31,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("String", "KAKAO_API_KEY", properties["KAKAO_API_KEY"].toString())
+        resValue("string", "KAKAO_API_KEY", properties["KAKAO_API_KEY"].toString())
     }
 
     buildTypes {
@@ -41,7 +56,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
     packaging {
         resources {
@@ -64,6 +79,13 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation("androidx.preference:preference:1.2.1")
+
+    implementation("com.kakao.maps.open:android:2.11.9")
+
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    implementation("androidx.compose.material3:material3-window-size-class-android:1.3.0")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -72,4 +94,8 @@ dependencies {
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+}
+
+kapt {
+    correctErrorTypes = true
 }

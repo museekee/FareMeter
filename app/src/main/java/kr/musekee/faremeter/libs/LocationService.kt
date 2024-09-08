@@ -9,9 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.location.LocationManager
-import android.location.LocationProvider
 import android.os.Build
-import android.os.Bundle
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -35,6 +33,8 @@ class LocationService : Service(), LocationListenerCompat {
     private lateinit var startTime: Date
     private var averageSpeed: Float = 0f
     private var topSpeed: Float = 0f
+    private val latitudes = mutableListOf<Double>()
+    private val longitudes = mutableListOf<Double>()
 
     override fun onCreate() {
         super.onCreate()
@@ -76,7 +76,9 @@ class LocationService : Service(), LocationListenerCompat {
                 fare = MeterUtil.fare.value,
                 averageSpeed = averageSpeed,
                 topSpeed = topSpeed,
-                distance = MeterUtil.distance.value
+                distance = MeterUtil.distance.value,
+                latitudes = latitudes,
+                longitudes = longitudes
             )
         )
         MeterUtil.isDriving.value = false
@@ -94,17 +96,11 @@ class LocationService : Service(), LocationListenerCompat {
 
         if (location.speed > topSpeed)
             topSpeed = location.speed
-        notiGosu(false)
-    }
 
-    @Deprecated("Deprecated in Java")
-    override fun onStatusChanged(provider: String, status: Int, extras: Bundle?) {
-        MeterUtil.gpsStatus.value = when (status) {
-            LocationProvider.OUT_OF_SERVICE -> GPSStatus.UNSTABLE
-            LocationProvider.TEMPORARILY_UNAVAILABLE -> GPSStatus.UNSTABLE
-            else -> GPSStatus.STABLE
-        }
-        super.onStatusChanged(provider, status, extras)
+        latitudes.add(location.latitude) // 위도
+        longitudes.add(location.longitude) // 경도
+
+        notiGosu(false)
     }
 
     fun stopUsingGps() {
@@ -164,8 +160,8 @@ class LocationService : Service(), LocationListenerCompat {
     }
 
     companion object {
-        private const val MIN_TIME_BW_UPDATES: Long = 300 // 1000ms = 1sec
-        private const val MIN_DISTANCE_CHANGE_UPDATES: Float = 0f
+        private const val MIN_TIME_BW_UPDATES: Long = 1000 // 1000ms = 1sec
+        private const val MIN_DISTANCE_CHANGE_UPDATES: Float = 1f
         var isRunning = false
     }
 }
