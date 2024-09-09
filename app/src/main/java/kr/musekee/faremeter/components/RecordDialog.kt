@@ -2,6 +2,8 @@ package kr.musekee.faremeter.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,12 +26,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -40,6 +47,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.kakao.vectormap.KakaoMapSdk
+import kr.musekee.faremeter.BuildConfig
 import kr.musekee.faremeter.components.main.MyKakaoMap
 import kr.musekee.faremeter.components.main.RecordDialogContainer
 import kr.musekee.faremeter.components.main.RecordOtherInfo
@@ -62,16 +71,20 @@ fun RecordDialog(
     onDeleteButtonClick: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val prefManager = PrefManager(LocalContext.current)
+    val context = LocalContext.current
+    val prefManager = PrefManager(context)
 
     Dialog(
-        onDismissRequest = onDismiss
+        onDismissRequest = {
+            KakaoMapSdk.init(context, BuildConfig.KAKAO_API_KEY) // 초기화 해야 현재 루트가 사라짐
+            onDismiss()
+        }
     ) {
         val transportation = getTransportationById(data.transportation)
         val transportationColor = transportation.color
         val startTime = data.startTime
         val endTime = data.endTime
-        val scrollState = rememberScrollState()
+        var isMapMoving by remember { mutableStateOf(false) }
 
         Card(
             modifier = Modifier
@@ -79,7 +92,10 @@ fun RecordDialog(
                 .width(300.dp)
                 .height(560.dp)
                 .padding(10.dp)
-                .verticalScroll(scrollState),
+                .verticalScroll(
+                    rememberScrollState(),
+                    enabled = !isMapMoving
+                ),
             colors = CardDefaults.cardColors(
                 containerColor = Color(0xFF202020)
             ),
@@ -433,7 +449,18 @@ fun RecordDialog(
                         annotatedValue = annotatedEndTime
                     )
 
-                    MyKakaoMap(Modifier, data.longitudes[0], data.latitudes[0])
+                    MyKakaoMap(
+                        modifier = Modifier.onPointerInteractionStartEnd(
+                            onPointerStart = {
+                                isMapMoving = true
+                            },
+                            onPointerEnd = {
+                                isMapMoving = false
+                            }
+                        ),
+                        latitudes = data.latitudes,
+                        longitudes =  data.longitudes
+                    )
                 }
                 //endregion
                 Row(
@@ -496,6 +523,19 @@ fun RecordDialog(
                 }
             }
         }
+    }
+}
+fun Modifier.onPointerInteractionStartEnd(
+    onPointerStart: () -> Unit,
+    onPointerEnd: () -> Unit,
+) = this then pointerInput(onPointerStart, onPointerEnd) {
+    awaitEachGesture {
+        awaitFirstDown(requireUnconsumed = false)
+        onPointerStart()
+        do {
+            val event = awaitPointerEvent()
+        } while (event.changes.any { it.pressed })
+        onPointerEnd()
     }
 }
 
