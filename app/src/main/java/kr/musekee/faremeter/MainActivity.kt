@@ -9,15 +9,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.kakao.vectormap.KakaoMapSdk
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.android.AndroidEntryPoint
 import kr.musekee.faremeter.datas.taxi
 import kr.musekee.faremeter.datas.transportations
 import kr.musekee.faremeter.datas.unknownTransportation
@@ -25,9 +21,6 @@ import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.screens.BottomNavigation
 import kr.musekee.faremeter.screens.NavigationHost
 import kr.musekee.faremeter.ui.theme.FareMeterTheme
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
 
 class MainActivity : ComponentActivity() {
 

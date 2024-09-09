@@ -83,8 +83,14 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
                             averageSpeed = it.getFloat(it.getColumnIndexOrThrow("AVERAGE_SPEED")),
                             topSpeed = it.getFloat(it.getColumnIndexOrThrow("TOP_SPEED")),
                             distance = it.getDouble(it.getColumnIndexOrThrow("DISTANCE")),
-                            latitudes = it.getString(it.getColumnIndexOrThrow("LATITUDES")).split(",").map { v -> v.toDouble() },
-                            longitudes = it.getString(it.getColumnIndexOrThrow("LONGITUDES")).split(",").map { v -> v.toDouble() }
+                            latitudes = if (it.getColumnIndex("LATITUDES") == -1)
+                                listOf(0.0)
+                            else
+                                it.getString(it.getColumnIndexOrThrow("LATITUDES")).split(",").map { v -> v.toDouble() },
+                            longitudes = if (it.getColumnIndex("LONGITUDES") == -1)
+                                listOf(0.0)
+                            else
+                                it.getString(it.getColumnIndexOrThrow("LONGITUDES")).split(",").map { v -> v.toDouble() }
                         )
                     } while (it.moveToNext())
                 it.close()

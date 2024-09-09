@@ -59,9 +59,9 @@ fun SelectTransportation() {
             Button(
                 onClick = {
                     val calendar = Calendar.getInstance()
-                    calendar.set(2024, Calendar.AUGUST, 22, 23, 15, 51)
+                    calendar.set(2024, Calendar.SEPTEMBER, 9, 22, 15, 51)
                     val startTime = calendar.time
-                    calendar.set(2024, Calendar.AUGUST, 23, 0, 12, 27)
+                    calendar.set(2024, Calendar.SEPTEMBER, 9, 22, 17, 36)
                     val endTime = calendar.time
                     recordDao.saveData(RecordData(
                         _id = 0,
@@ -69,15 +69,31 @@ fun SelectTransportation() {
                         transportation = taxi.id,
                         startTime = startTime,
                         endTime = endTime,
-                        fare = 48653,
+                        fare = 4800,
                         averageSpeed = 15.5f,
-                        topSpeed = 31.2f,
-                        distance = 126373.47,
-                        latitudes = listOf(0.0),
-                        longitudes = listOf(0.0)
+                        topSpeed = 46.1f,
+                        distance = 436.0,
+                        latitudes = listOf(
+                            36.978051,
+                            36.978207,
+                            36.978614,
+                            36.978733,
+                            36.979611,
+                            36.980475,
+                            36.980742
+                        ),
+                        longitudes = listOf(
+                            126.925266,
+                            126.925350,
+                            126.925684,
+                            126.925783,
+                            126.926501,
+                            126.927234,
+                            126.926737
+                        )
                     ))
                 },
-                enabled = false
+//                enabled = false
             ) {
                 Text(text = "비밀 버튼")
             }

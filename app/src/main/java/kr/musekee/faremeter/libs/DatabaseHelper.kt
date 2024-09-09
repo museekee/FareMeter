@@ -34,7 +34,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "data.db"
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 3
         var dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     }
 }

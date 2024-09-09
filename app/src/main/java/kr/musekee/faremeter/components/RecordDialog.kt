@@ -433,7 +433,7 @@ fun RecordDialog(
                         annotatedValue = annotatedEndTime
                     )
 
-                    MyKakaoMap(Modifier, 0.0, 0.0)
+                    MyKakaoMap(Modifier, data.longitudes[0], data.latitudes[0])
                 }
                 //endregion
                 Row(
