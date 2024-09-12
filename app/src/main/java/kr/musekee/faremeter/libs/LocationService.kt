@@ -35,6 +35,9 @@ class LocationService : Service(), LocationListenerCompat {
     private var topSpeed: Float = 0f
     private val latitudes = mutableListOf<Double>()
     private val longitudes = mutableListOf<Double>()
+    private val noGPSTimes = mutableListOf<Pair<Long, Long>>() // GPS 없는 이전 시간, 현재 시간
+    private val noGPSLatitude = mutableListOf<Pair<Double, Double>>() // GPS 없는 이전 위도, 현재 위도
+    private val noGPSLongitude = mutableListOf<Pair<Double, Double>>() // GPS 없는 이전 경도, 현재 경도
 
     override fun onCreate() {
         super.onCreate()
@@ -78,7 +81,10 @@ class LocationService : Service(), LocationListenerCompat {
                 topSpeed = topSpeed,
                 distance = MeterUtil.distance.value,
                 latitudes = latitudes,
-                longitudes = longitudes
+                longitudes = longitudes,
+                noGPSTimes = noGPSTimes,
+                noGPSLatitudes = noGPSLatitude,
+                noGPSLongitudes = noGPSLongitude
             )
         )
         MeterUtil.isDriving.value = false
@@ -88,17 +94,36 @@ class LocationService : Service(), LocationListenerCompat {
         stopForeground(STOP_FOREGROUND_REMOVE)
         isRunning = false
     }
+
+    override fun onProviderDisabled(provider: String) {
+        super.onProviderDisabled(provider)
+        if (provider == LocationManager.GPS_PROVIDER)
+            MeterUtil.gpsStatus.value = GPSStatus.UNSTABLE
+    }
+
+    override fun onProviderEnabled(provider: String) {
+        super.onProviderEnabled(provider)
+        if (provider == LocationManager.GPS_PROVIDER)
+            MeterUtil.gpsStatus.value = GPSStatus.STABLE   
+    }
+
     override fun onLocationChanged(location: Location) {
+        latitudes.add(location.latitude) // 위도
+        longitudes.add(location.longitude) // 경도
+
         MeterUtil.increaseFare(location.speed)
+        val checkNoGps = MeterUtil.checkNoGps(location.latitude, location.longitude)
+        if (checkNoGps != null) {
+            noGPSTimes.add(checkNoGps.first)
+            noGPSLatitude.add(checkNoGps.second)
+            noGPSLongitude.add(checkNoGps.third)
+        }
         if (averageSpeed == 0f) averageSpeed = location.speed
         averageSpeed += location.speed
         averageSpeed /= 2
 
         if (location.speed > topSpeed)
             topSpeed = location.speed
-
-        latitudes.add(location.latitude) // 위도
-        longitudes.add(location.longitude) // 경도
 
         notiGosu(false)
     }
@@ -160,8 +185,8 @@ class LocationService : Service(), LocationListenerCompat {
     }
 
     companion object {
-        private const val MIN_TIME_BW_UPDATES: Long = 1000 // 1000ms = 1sec
-        private const val MIN_DISTANCE_CHANGE_UPDATES: Float = 1f
+        private const val MIN_TIME_BW_UPDATES: Long = 300 // 1000ms = 1sec
+        private const val MIN_DISTANCE_CHANGE_UPDATES: Float = 0f
         var isRunning = false
     }
 }

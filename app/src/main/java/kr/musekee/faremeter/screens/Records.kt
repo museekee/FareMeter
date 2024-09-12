@@ -54,7 +54,7 @@ import java.util.Date
 fun Results() {
     val scrollState = rememberScrollState()
     var dialogEnabled by remember { mutableStateOf(false) }
-    var dialogData by remember { mutableStateOf(RecordData(1, "서울특별시", "TAXI", Date(), Date(), 10000, 30f, 100f, 50.51, listOf(0.0), listOf(0.0))) }
+    var dialogData by remember { mutableStateOf(RecordData(1, "서울특별시", "TAXI", Date(), Date(), 10000, 30f, 100f, 50.51, listOf(0.0), listOf(0.0), listOf(), listOf(), listOf())) }
     val recordDao = RecordDao(DatabaseHelper(LocalContext.current))
     var isTransportationPopup by remember { mutableStateOf(false) }
     var limit by remember { mutableIntStateOf(0) }

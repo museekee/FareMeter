@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,9 +50,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.kakao.vectormap.KakaoMapSdk
 import kr.musekee.faremeter.BuildConfig
-import kr.musekee.faremeter.components.main.MyKakaoMap
 import kr.musekee.faremeter.components.main.RecordDialogContainer
 import kr.musekee.faremeter.components.main.RecordOtherInfo
+import kr.musekee.faremeter.components.main.RouteKakaoMap
+import kr.musekee.faremeter.components.main.RouteKakaoMapMode
 import kr.musekee.faremeter.datas.getTransportationById
 import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.libs.RecordData
@@ -85,6 +87,7 @@ fun RecordDialog(
         val startTime = data.startTime
         val endTime = data.endTime
         var isMapMoving by remember { mutableStateOf(false) }
+        var showNoGPSMap by remember { mutableStateOf(false) }
 
         Card(
             modifier = Modifier
@@ -449,18 +452,49 @@ fun RecordDialog(
                         annotatedValue = annotatedEndTime
                     )
 
-                    MyKakaoMap(
-                        modifier = Modifier.onPointerInteractionStartEnd(
-                            onPointerStart = {
-                                isMapMoving = true
-                            },
-                            onPointerEnd = {
-                                isMapMoving = false
-                            }
-                        ),
-                        latitudes = data.latitudes,
-                        longitudes =  data.longitudes
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceAround
+                    ) {
+                        Text(text = "기본 지도")
+                        Switch(checked = showNoGPSMap, onCheckedChange = {
+                            showNoGPSMap = !showNoGPSMap
+                        })
+                        Text(text = "GPS 끊김 기록")
+                    }
+
+                    if (!showNoGPSMap)
+                        RouteKakaoMap(
+                            modifier = Modifier.onPointerInteractionStartEnd(
+                                onPointerStart = {
+                                    isMapMoving = true },
+                                onPointerEnd = {
+                                    isMapMoving = false
+                                }
+                            ),
+                            latitudes = data.latitudes,
+                            longitudes = data.longitudes,
+                            noGPSLatitudes = data.noGPSLatitudes,
+                            noGPSLongitudes = data.noGPSLongitudes,
+                            mode = RouteKakaoMapMode.Normal
+                        )
+                    else
+                        RouteKakaoMap(
+                            modifier = Modifier.onPointerInteractionStartEnd(
+                                onPointerStart = {
+                                    isMapMoving = true },
+                                onPointerEnd = {
+                                    isMapMoving = false
+                                }
+                            ),
+                            latitudes = data.latitudes,
+                            longitudes = data.longitudes,
+                            noGPSLatitudes = data.noGPSLatitudes,
+                            noGPSLongitudes = data.noGPSLongitudes,
+                            mode = RouteKakaoMapMode.NoGPS
+                        )
                 }
                 //endregion
                 Row(

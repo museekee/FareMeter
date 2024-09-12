@@ -18,6 +18,9 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
             put("DISTANCE", data.distance)
             put("LATITUDES", data.latitudes.joinToString(","))
             put("LONGITUDES", data.longitudes.joinToString(","))
+            put("NO_GPS_TIMES", data.noGPSTimes.joinToString(",") { it.toList().joinToString("/") }) // 100/105,200/210
+            put("NO_GPS_LATITUDES", data.noGPSLatitudes.joinToString(",") { it.toList().joinToString("/") })
+            put("NO_GPS_LONGITUDES", data.noGPSLongitudes.joinToString(",") { it.toList().joinToString("/") })
         }
 
         return db.insert("Records", null, cv)
@@ -83,14 +86,41 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
                             averageSpeed = it.getFloat(it.getColumnIndexOrThrow("AVERAGE_SPEED")),
                             topSpeed = it.getFloat(it.getColumnIndexOrThrow("TOP_SPEED")),
                             distance = it.getDouble(it.getColumnIndexOrThrow("DISTANCE")),
-                            latitudes = if (it.getColumnIndex("LATITUDES") == -1 || it.getString(it.getColumnIndexOrThrow("LATITUDES")) == "")
+                            latitudes = if (it.getString(it.getColumnIndexOrThrow("LATITUDES")) == "")
                                 listOf(0.0)
                             else
                                 it.getString(it.getColumnIndexOrThrow("LATITUDES")).split(",").map { v -> v.toDouble() },
-                            longitudes = if (it.getColumnIndex("LONGITUDES") == -1 || it.getString(it.getColumnIndexOrThrow("LONGITUDES")) == "")
+                            longitudes = if (it.getString(it.getColumnIndexOrThrow("LONGITUDES")) == "")
                                 listOf(0.0)
                             else
-                                it.getString(it.getColumnIndexOrThrow("LONGITUDES")).split(",").map { v -> v.toDouble() }
+                                it.getString(it.getColumnIndexOrThrow("LONGITUDES")).split(",").map { v -> v.toDouble() },
+                            noGPSTimes = if (it.getString(it.getColumnIndexOrThrow("NO_GPS_TIMES")) == "")
+                                listOf()
+                            else
+                                it.getString(it.getColumnIndexOrThrow("NO_GPS_TIMES")).split(",").map { v ->
+                                val vList = v.split("/").map {
+                                    w -> w.toLong()
+                                }
+                                Pair(vList[0], vList[1])
+                            },
+                            noGPSLatitudes = if (it.getString(it.getColumnIndexOrThrow("NO_GPS_LATITUDES")) == "")
+                                listOf()
+                            else
+                                it.getString(it.getColumnIndexOrThrow("NO_GPS_LATITUDES")).split(",").map { v ->
+                                    val vList = v.split("/").map {
+                                            w -> w.toDouble()
+                                    }
+                                    Pair(vList[0], vList[1])
+                                },
+                            noGPSLongitudes = if (it.getString(it.getColumnIndexOrThrow("NO_GPS_LONGITUDES")) == "")
+                                listOf()
+                            else
+                                it.getString(it.getColumnIndexOrThrow("NO_GPS_LONGITUDES")).split(",").map { v ->
+                                    val vList = v.split("/").map {
+                                            w -> w.toDouble()
+                                    }
+                                    Pair(vList[0], vList[1])
+                                }
                         )
                     } while (it.moveToNext())
                 it.close()

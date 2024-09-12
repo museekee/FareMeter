@@ -21,7 +21,10 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 TOP_SPEED REAL,
                 DISTANCE REAL,
                 LATITUDES TEXT,
-                LONGITUDES TEXT
+                LONGITUDES TEXT,
+                NO_GPS_TIMES TEXT,
+                NO_GPS_LATITUDES TEXT,
+                NO_GPS_LONGITUDES TEXT
             );
         """.trimIndent()
         sqLiteDatabase.execSQL(createRecordTable)
@@ -34,7 +37,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "data.db"
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_VERSION = 1
         var dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     }
 }
