@@ -47,14 +47,13 @@ import kr.musekee.faremeter.libs.RecordData
 import kr.musekee.faremeter.libs.bottomBorder
 import kr.musekee.faremeter.ui.theme.lineSeedKr
 import kr.musekee.faremeter.ui.theme.nanumGothic
-import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Results() {
     val scrollState = rememberScrollState()
     var dialogEnabled by remember { mutableStateOf(false) }
-    var dialogData by remember { mutableStateOf(RecordData(1, "서울특별시", "TAXI", Date(), Date(), 10000, 30f, 100f, 50.51, listOf(0.0), listOf(0.0), listOf(), listOf(), listOf())) }
+    var dialogData by remember { mutableStateOf(RecordData(1, "서울특별시", "TAXI", 10000, 30f, 100f, 50.51, listOf())) }
     val recordDao = RecordDao(DatabaseHelper(LocalContext.current))
     var isTransportationPopup by remember { mutableStateOf(false) }
     var limit by remember { mutableIntStateOf(0) }
@@ -166,7 +165,7 @@ fun Results() {
                 .transportation(transportation)
                 .orderBy("END_TIME", dateOrder)
                 .execute().mapIndexed { index, it ->
-                RecordItem(index, it.transportation, it.fare, it.distance, it.endTime) {
+                RecordItem(index, it.transportation, it.fare, it.distance, it.timePos.last().time) {
                     dialogData = it
                     dialogEnabled = true
                 }

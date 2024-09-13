@@ -23,7 +23,7 @@ import kr.musekee.faremeter.libs.DatabaseHelper
 import kr.musekee.faremeter.libs.RecordDao
 import kr.musekee.faremeter.libs.RecordData
 import kr.musekee.faremeter.libs.SetPortrait
-import java.util.Calendar
+import kr.musekee.faremeter.libs.TimePosition
 
 @Composable
 fun SelectTransportation() {
@@ -58,65 +58,32 @@ fun SelectTransportation() {
             
             Button(
                 onClick = {
-                    val calendar = Calendar.getInstance()
-                    calendar.set(2024, Calendar.SEPTEMBER, 9, 22, 15, 51)
-                    val startTime = calendar.time
-                    calendar.set(2024, Calendar.SEPTEMBER, 9, 22, 25, 36)
-                    val endTime = calendar.time
                     recordDao.saveData(RecordData(
                         _id = 0,
                         fareCalcType = "경기도",
                         transportation = taxi.id,
-                        startTime = startTime,
-                        endTime = endTime,
                         fare = 4800,
                         averageSpeed = 15.5f,
                         topSpeed = 46.1f,
                         distance = 436.0,
-                        latitudes = listOf(
-                            36.990497,
-                            36.990087,
-                            36.989777,
-                            36.989487,
-                            36.988596,
-                            36.988035,
-                            36.986425,
-                            36.986432,
-                            36.986457,
-                            36.986001,
-                            36.985664,
-                            36.984542,
-                            36.984548
-                        ),
-                        longitudes = listOf(
-                            126.913105,
-                            126.914300,
-                            126.915167,
-                            126.916010,
-                            126.916103,
-                            126.916127,
-                            126.917321,
-                            126.917930,
-                            126.918782,
-                            126.919281,
-                            126.919281,
-                            126.919289,
-                            126.919961
-                        ),
-                        noGPSLatitudes = listOf(
-                            Pair(36.988035, 36.986425),
-                            Pair(36.986457, 36.986001),
-                        ),
-                        noGPSLongitudes = listOf(
-                            Pair(126.916127, 126.917321),
-                            Pair(126.918782, 126.919281)
-                        ),
-                        noGPSTimes = listOf(
-                            Pair(154641656, 458664856)
+                        timePos = listOf(
+                            TimePosition(36.990497, 126.913105, 1726242392281),
+                            TimePosition(36.990087, 126.914300, 1726242392281),
+                            TimePosition(36.989777, 126.915167, 1726242392281),
+                            TimePosition(36.989487, 126.916010, 1726242392281),
+                            TimePosition(36.988596, 126.916103, 1726242392281),
+                            TimePosition(36.988035, 126.916127, 0),
+                            TimePosition(36.986425, 126.917321, 1726242392281),
+                            TimePosition(36.986432, 126.917930, 1726242392281),
+                            TimePosition(36.986457, 126.918782, 0),
+                            TimePosition(36.986001, 126.919281, 1726242392281),
+                            TimePosition(36.985664, 126.919281, 1726242392281),
+                            TimePosition(36.984542, 126.919289, 1726242392281),
+                            TimePosition(36.984548, 126.919961, 1726242392281),
                         )
                     ))
                 },
-                enabled = false
+//                enabled = false
             ) {
                 Text(text = "비밀 버튼")
             }

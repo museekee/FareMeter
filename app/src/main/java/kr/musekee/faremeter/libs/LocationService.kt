@@ -33,11 +33,7 @@ class LocationService : Service(), LocationListenerCompat {
     private lateinit var startTime: Date
     private var averageSpeed: Float = 0f
     private var topSpeed: Float = 0f
-    private val latitudes = mutableListOf<Double>()
-    private val longitudes = mutableListOf<Double>()
-    private val noGPSTimes = mutableListOf<Pair<Long, Long>>() // GPS 없는 이전 시간, 현재 시간
-    private val noGPSLatitude = mutableListOf<Pair<Double, Double>>() // GPS 없는 이전 위도, 현재 위도
-    private val noGPSLongitude = mutableListOf<Pair<Double, Double>>() // GPS 없는 이전 경도, 현재 경도
+    private val timePos = mutableListOf<TimePosition>()
 
     override fun onCreate() {
         super.onCreate()
@@ -74,17 +70,11 @@ class LocationService : Service(), LocationListenerCompat {
                 _id = 0,
                 fareCalcType = fareCalcType,
                 transportation = transportation,
-                startTime = startTime,
-                endTime = Date(),
                 fare = MeterUtil.fare.value,
                 averageSpeed = averageSpeed,
                 topSpeed = topSpeed,
                 distance = MeterUtil.distance.value,
-                latitudes = latitudes,
-                longitudes = longitudes,
-                noGPSTimes = noGPSTimes,
-                noGPSLatitudes = noGPSLatitude,
-                noGPSLongitudes = noGPSLongitude
+                timePos = timePos
             )
         )
         MeterUtil.isDriving.value = false
@@ -108,16 +98,12 @@ class LocationService : Service(), LocationListenerCompat {
     }
 
     override fun onLocationChanged(location: Location) {
-        latitudes.add(location.latitude) // 위도
-        longitudes.add(location.longitude) // 경도
-
+        timePos.add(TimePosition(
+            latitude = location.latitude,
+            longitude = location.longitude,
+            time = System.currentTimeMillis()
+        ))
         MeterUtil.increaseFare(location.speed)
-        val checkNoGps = MeterUtil.checkNoGps(location.latitude, location.longitude)
-        if (checkNoGps != null) {
-            noGPSTimes.add(checkNoGps.first)
-            noGPSLatitude.add(checkNoGps.second)
-            noGPSLongitude.add(checkNoGps.third)
-        }
         if (averageSpeed == 0f) averageSpeed = location.speed
         averageSpeed += location.speed
         averageSpeed /= 2

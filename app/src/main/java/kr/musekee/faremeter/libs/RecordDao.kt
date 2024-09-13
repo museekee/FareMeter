@@ -1,8 +1,6 @@
 package kr.musekee.faremeter.libs
 
 import android.content.ContentValues
-import kr.musekee.faremeter.libs.DatabaseHelper.Companion.dateFormat
-import java.util.Date
 
 class RecordDao(private val dbHelper: DatabaseHelper) {
     fun saveData(data: RecordData): Long {
@@ -10,17 +8,14 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
         val cv = ContentValues().apply {
             put("FARE_CALC_TYPE", data.fareCalcType)
             put("TRANSPORTATION", data.transportation)
-            put("START_TIME", dateFormat.format(data.startTime))
-            put("END_TIME", dateFormat.format(data.endTime))
+            put("END_TIME", data.timePos.last().time)
+            put("TIMES", data.timePos.map { it.time }.joinToString(","))
             put("FARE", data.fare)
             put("AVERAGE_SPEED", data.averageSpeed)
             put("TOP_SPEED", data.topSpeed)
             put("DISTANCE", data.distance)
-            put("LATITUDES", data.latitudes.joinToString(","))
-            put("LONGITUDES", data.longitudes.joinToString(","))
-            put("NO_GPS_TIMES", data.noGPSTimes.joinToString(",") { it.toList().joinToString("/") }) // 100/105,200/210
-            put("NO_GPS_LATITUDES", data.noGPSLatitudes.joinToString(",") { it.toList().joinToString("/") })
-            put("NO_GPS_LONGITUDES", data.noGPSLongitudes.joinToString(",") { it.toList().joinToString("/") })
+            put("LATITUDES", data.timePos.map { it.latitude }.joinToString(","))
+            put("LONGITUDES", data.timePos.map { it.longitude }.joinToString(","))
         }
 
         return db.insert("Records", null, cv)
@@ -74,53 +69,27 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
             cursor.use {
                 if (it.moveToFirst())
                     do {
+                        val timePos = mutableListOf<TimePosition>()
+                        val latitudes = it.getString(it.getColumnIndexOrThrow("LATITUDES"))
+                        val longitudes = it.getString(it.getColumnIndexOrThrow("LONGITUDES"))
+                        val times = it.getString(it.getColumnIndexOrThrow("TIMES"))
+                        if ((latitudes == "" || longitudes == "" || times == "").not())
+                            times.split(",").mapIndexed { idx, time ->
+                                timePos.add(TimePosition(
+                                    latitude = latitudes.split(",")[idx].toDouble(),
+                                    longitude = longitudes.split(",")[idx].toDouble(),
+                                    time = time.toLong()
+                                ))
+                            }
                         data += RecordData(
                             _id = it.getInt(it.getColumnIndexOrThrow("_ID")),
                             fareCalcType = it.getString(it.getColumnIndexOrThrow("FARE_CALC_TYPE")),
                             transportation = it.getString(it.getColumnIndexOrThrow("TRANSPORTATION")),
-                            startTime = dateFormat.parse(it.getString(it.getColumnIndexOrThrow("START_TIME")))
-                                ?: Date(System.currentTimeMillis()),
-                            endTime = dateFormat.parse(it.getString(it.getColumnIndexOrThrow("END_TIME")))
-                                ?: Date(System.currentTimeMillis()),
+                            timePos = timePos,
                             fare = it.getInt(it.getColumnIndexOrThrow("FARE")),
                             averageSpeed = it.getFloat(it.getColumnIndexOrThrow("AVERAGE_SPEED")),
                             topSpeed = it.getFloat(it.getColumnIndexOrThrow("TOP_SPEED")),
-                            distance = it.getDouble(it.getColumnIndexOrThrow("DISTANCE")),
-                            latitudes = if (it.getString(it.getColumnIndexOrThrow("LATITUDES")) == "")
-                                listOf(0.0)
-                            else
-                                it.getString(it.getColumnIndexOrThrow("LATITUDES")).split(",").map { v -> v.toDouble() },
-                            longitudes = if (it.getString(it.getColumnIndexOrThrow("LONGITUDES")) == "")
-                                listOf(0.0)
-                            else
-                                it.getString(it.getColumnIndexOrThrow("LONGITUDES")).split(",").map { v -> v.toDouble() },
-                            noGPSTimes = if (it.getString(it.getColumnIndexOrThrow("NO_GPS_TIMES")) == "")
-                                listOf()
-                            else
-                                it.getString(it.getColumnIndexOrThrow("NO_GPS_TIMES")).split(",").map { v ->
-                                val vList = v.split("/").map {
-                                    w -> w.toLong()
-                                }
-                                Pair(vList[0], vList[1])
-                            },
-                            noGPSLatitudes = if (it.getString(it.getColumnIndexOrThrow("NO_GPS_LATITUDES")) == "")
-                                listOf()
-                            else
-                                it.getString(it.getColumnIndexOrThrow("NO_GPS_LATITUDES")).split(",").map { v ->
-                                    val vList = v.split("/").map {
-                                            w -> w.toDouble()
-                                    }
-                                    Pair(vList[0], vList[1])
-                                },
-                            noGPSLongitudes = if (it.getString(it.getColumnIndexOrThrow("NO_GPS_LONGITUDES")) == "")
-                                listOf()
-                            else
-                                it.getString(it.getColumnIndexOrThrow("NO_GPS_LONGITUDES")).split(",").map { v ->
-                                    val vList = v.split("/").map {
-                                            w -> w.toDouble()
-                                    }
-                                    Pair(vList[0], vList[1])
-                                }
+                            distance = it.getDouble(it.getColumnIndexOrThrow("DISTANCE"))
                         )
                     } while (it.moveToNext())
                 it.close()

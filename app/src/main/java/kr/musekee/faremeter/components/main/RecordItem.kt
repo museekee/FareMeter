@@ -29,7 +29,6 @@ import kr.musekee.faremeter.libs.bottomBorder
 import kr.musekee.faremeter.libs.cutForDecimal
 import kr.musekee.faremeter.ui.theme.lineSeedKr
 import kr.musekee.faremeter.ui.theme.nanumGothic
-import java.util.Date
 import java.util.concurrent.TimeUnit
 
 @Composable
@@ -38,7 +37,7 @@ fun RecordItem(
     transportation: String,
     fare: Int,
     distance: Double,
-    date: Date,
+    date: Long,
     onClick: () -> Unit
 ) {
     val transportationData = transportations.find { it.id == transportation } ?: unknownTransportation
@@ -92,7 +91,7 @@ fun RecordItem(
         Text( // 날짜
             modifier = Modifier
                 .width(70.dp),
-            text = "${-getDateDiff(Date(), date, TimeUnit.DAYS)}일 전",
+            text = "${-getDateDiff(System.currentTimeMillis(), date, TimeUnit.DAYS)}일 전",
             color = Color(0xFFBBBBBB),
             fontFamily = lineSeedKr,
             fontWeight = FontWeight.Medium,
@@ -102,7 +101,7 @@ fun RecordItem(
     }
 }
 
-fun getDateDiff(date1: Date, date2: Date, timeUnit: TimeUnit): Long {
-    val diffInMillies = date2.time - date1.time
-    return timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS)
+fun getDateDiff(date1: Long, date2: Long, timeUnit: TimeUnit): Long {
+    val diffInMillis = date2 - date1
+    return timeUnit.convert(diffInMillis, TimeUnit.MILLISECONDS)
 }
