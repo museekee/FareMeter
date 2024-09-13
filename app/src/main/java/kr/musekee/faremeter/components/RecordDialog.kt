@@ -89,6 +89,7 @@ fun RecordDialog(
         val endTime = Date(data.timePos.last().time)
         var isMapMoving by remember { mutableStateOf(false) }
         var showNoGPSMap by remember { mutableStateOf(false) }
+        var showRemoveDialog by remember { mutableStateOf(false) }
 
         Card(
             modifier = Modifier
@@ -522,8 +523,7 @@ fun RecordDialog(
                             .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                         shape = RoundedCornerShape(15.dp),
                         onClick = {
-                            onDeleteButtonClick()
-                            onDismiss()
+                            showRemoveDialog = true
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
@@ -565,6 +565,22 @@ fun RecordDialog(
                 }
             }
         }
+
+        if (showRemoveDialog)
+            YesNoDialog(
+                title = "정말로 기록을 삭제하시겠습니까?",
+                description = "삭제 후에는 복구할 수 없습니다",
+                yesLabel = "삭제",
+                noLabel = "취소",
+                yesColor = Color(0xFFD32F2F),
+                onClickYes = {
+                    onDeleteButtonClick()
+                    onDismiss()
+                },
+                onDismiss = {
+                    showRemoveDialog = false
+                }
+            )
     }
 }
 fun Modifier.onPointerInteractionStartEnd(

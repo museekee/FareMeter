@@ -66,13 +66,15 @@ fun RecordOtherInfo(
                 Text(
                     text = annotatedValue,
                     fontSize = 15.sp,
-                    fontFamily = lineSeedKr
+                    fontFamily = lineSeedKr,
+                    color = Color(0xFFEEEEEE)
                 )
             else
                 Text(
                     text = value,
                     fontSize = 15.sp,
-                    fontFamily = lineSeedKr
+                    fontFamily = lineSeedKr,
+                    color = Color(0xFFEEEEEE)
                 )
         }
     }
