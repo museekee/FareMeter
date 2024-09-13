@@ -35,6 +35,9 @@ object MeterUtil {
 
     fun resetValues() {
         gpsStatus.value = GPSStatus.UNSTABLE
+        fare.value = 0
+        distance.value = 0.0
+        speed.value = 0.0f
         taxiCalc.resetValues()
     }
 

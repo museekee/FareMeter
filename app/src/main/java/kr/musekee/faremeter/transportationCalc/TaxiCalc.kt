@@ -64,10 +64,13 @@ object TaxiCalc {
 
     fun resetValues() {
         fare.value = minFare
+        nightFare.value = 0
+        intercityFare.value = 0
         counter.value = minDistance
         _counter.value = counter.value
         distance.value = 0.0
         speed.value = 0.0f
+        lastUpdateTime = 0L
 
         isNight = false
         isIntercity = false
