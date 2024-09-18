@@ -25,6 +25,9 @@ object MeterUtil {
     var gpsStatus: MutableState<GPSStatus> = mutableStateOf(GPSStatus.UNSTABLE)
     var isDriving: MutableState<Boolean> = mutableStateOf(false)
 
+    var averageSpeed: Float = -1f
+    var topSpeed: Float = 0f
+
     fun init(transportation: String, calcType: String) {
         this@MeterUtil.transportation = transportation
 
@@ -38,6 +41,8 @@ object MeterUtil {
         fare.value = 0
         distance.value = 0.0
         speed.value = 0.0f
+        averageSpeed = -1f
+        topSpeed = 0f
         taxiCalc.resetValues()
     }
 
@@ -50,5 +55,13 @@ object MeterUtil {
         fare.value = mFare.value
         distance.value = mDistance.value
         speed.value = mSpeed.value
+
+        if (averageSpeed == -1f) averageSpeed = curSpeed
+        else {
+            averageSpeed += curSpeed
+            averageSpeed /= 2
+        }
+        if (topSpeed < curSpeed)
+            topSpeed = curSpeed
     }
 }

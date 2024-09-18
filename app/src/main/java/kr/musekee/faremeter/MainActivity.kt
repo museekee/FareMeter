@@ -67,6 +67,20 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        // DB EXPORT
+//        val file = Environment.getExternalStorageDirectory()
+//        val currentPath = "/data/data/kr.musekee.faremeter/databases/data.db"
+//        val copyPath = "/Download/copydb_name.db"
+//        val currentDB = File(currentPath)
+//        val backupDB = File(file, copyPath)
+//        if (currentDB.exists()) {
+//            val src = FileInputStream(currentDB).channel
+//            val dst = FileOutputStream(backupDB).channel
+//            dst.transferFrom(src, 0, src.size())
+//            src.close()
+//            dst.close()
+//        }
         KakaoMapSdk.init(this@MainActivity, BuildConfig.KAKAO_API_KEY)
     }
     private fun checkAndRequestPermissions(

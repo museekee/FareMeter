@@ -57,7 +57,7 @@ import kr.musekee.faremeter.components.main.RouteKakaoMapMode
 import kr.musekee.faremeter.datas.getTransportationById
 import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.libs.RecordData
-import kr.musekee.faremeter.libs.TimePosition
+import kr.musekee.faremeter.libs.LatLngData
 import kr.musekee.faremeter.libs.cutForDecimal
 import kr.musekee.faremeter.libs.toSpeedUnit
 import kr.musekee.faremeter.ui.theme.lineSeedKr
@@ -69,7 +69,8 @@ import java.util.concurrent.TimeUnit
 
 @Composable
 fun RecordDialog(
-    data: RecordData,
+    rData: RecordData,
+    lData: List<LatLngData>,
     onCloseBtnClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
     onDismiss: () -> Unit
@@ -83,10 +84,10 @@ fun RecordDialog(
             onDismiss()
         }
     ) {
-        val transportation = getTransportationById(data.transportation)
+        val transportation = getTransportationById(rData.transportation)
         val transportationColor = transportation.color
-        val startTime = Date(data.timePos[0].time)
-        val endTime = Date(data.timePos.last().time)
+        val startTime = Date(lData[0].time)
+        val endTime = Date(lData.last().time)
         var isMapMoving by remember { mutableStateOf(false) }
         var showNoGPSMap by remember { mutableStateOf(false) }
         var showRemoveDialog by remember { mutableStateOf(false) }
@@ -112,7 +113,7 @@ fun RecordDialog(
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 Text(
-                    text = "${data.fare}원",
+                    text = "${rData.fare}원",
                     fontSize = 50.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFFFDE4D),
@@ -274,7 +275,7 @@ fun RecordDialog(
                                     .size(100.dp)
                             ) {
                                 val startAngle = 225f - 90f
-                                val sweepAngle = (data.averageSpeed / data.topSpeed) * 270
+                                val sweepAngle = (rData.averageSpeed / rData.topSpeed) * 270
 
                                 val strokeWidth = 7.5.dp.toPx()
                                 val radius = (100.dp.toPx() - strokeWidth) / 2
@@ -319,13 +320,13 @@ fun RecordDialog(
                             ) {
                                 val annotatedSpeedString = buildAnnotatedString {
                                     withStyle(SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
-                                        append(data.averageSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
+                                        append(rData.averageSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
                                     }
                                     withStyle(SpanStyle(fontSize = 12.sp)) {
                                         append(" ${prefManager.speedUnit}\n")
                                     }
                                     withStyle(SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
-                                        append(data.topSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
+                                        append(rData.topSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
                                     }
                                     withStyle(SpanStyle(fontSize = 12.sp)) {
                                         append(" ${prefManager.speedUnit}")
@@ -366,11 +367,11 @@ fun RecordDialog(
                     )
                     RecordOtherInfo(
                         name = "이동 거리",
-                        value = "${(data.distance/1000).cutForDecimal(1)} km"
+                        value = "${(rData.distance/1000).cutForDecimal(1)} km"
                     )
                     RecordOtherInfo(
                         name = "요금 체계",
-                        value = data.fareCalcType
+                        value = rData.fareCalcType
                     )
                     val calendar = Calendar.getInstance()
                     calendar.time = startTime
@@ -467,11 +468,10 @@ fun RecordDialog(
                         Text(text = "GPS 끊김 기록")
                     }
 
-                    val noGPSTimePos = mutableListOf<Pair<TimePosition, TimePosition>>()
-                    for (i in 1 until data.timePos.size) {
-                        val timePos = data.timePos
-                        if (timePos[i].time - timePos[i - 1].time > 5000L) {
-                            noGPSTimePos.add(Pair(timePos[i - 1], timePos[i]))
+                    val noGPSTimePos = mutableListOf<Pair<LatLngData, LatLngData>>()
+                    for (i in 1 until lData.size) {
+                        if (lData[i].time - lData[i - 1].time > 5000L) {
+                            noGPSTimePos.add(Pair(lData[i - 1], lData[i]))
                         }
                     }
                     if (!showNoGPSMap)
@@ -483,8 +483,8 @@ fun RecordDialog(
                                     isMapMoving = false
                                 }
                             ),
-                            latitudes = data.timePos.map { it.latitude },
-                            longitudes = data.timePos.map { it.longitude },
+                            latitudes = lData.map { it.latitude },
+                            longitudes = lData.map { it.longitude },
                             noGPSLatitudes = noGPSTimePos.map { Pair(it.first.latitude, it.second.latitude) },
                             noGPSLongitudes = noGPSTimePos.map { Pair(it.first.longitude, it.second.longitude) },
                             mode = RouteKakaoMapMode.Normal
@@ -498,8 +498,8 @@ fun RecordDialog(
                                     isMapMoving = false
                                 }
                             ),
-                            latitudes = data.timePos.map { it.latitude },
-                            longitudes = data.timePos.map { it.longitude },
+                            latitudes = lData.map { it.latitude },
+                            longitudes = lData.map { it.longitude },
                             noGPSLatitudes = noGPSTimePos.map { Pair(it.first.latitude, it.second.latitude) },
                             noGPSLongitudes = noGPSTimePos.map { Pair(it.first.longitude, it.second.longitude) },
                             mode = RouteKakaoMapMode.NoGPS

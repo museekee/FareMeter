@@ -7,22 +7,28 @@ import android.database.sqlite.SQLiteOpenHelper
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onCreate(sqLiteDatabase: SQLiteDatabase) {
-        val createRecordTable = """
+        val sqlRecords = """
             create table Records (
-                _ID integer primary key autoincrement,
+                ID TEXT primary key,
                 FARE_CALC_TYPE TEXT,
                 TRANSPORTATION TEXT,
                 END_TIME INTEGER,
-                TIMES TEXT,
                 FARE INTEGER,
                 AVERAGE_SPEED REAL,
                 TOP_SPEED REAL,
-                DISTANCE REAL,
-                LATITUDES TEXT,
-                LONGITUDES TEXT
+                DISTANCE REAL
             );
         """.trimIndent()
-        sqLiteDatabase.execSQL(createRecordTable)
+        sqLiteDatabase.execSQL(sqlRecords)
+        val sqlLatLng = """
+            create table LatLng (
+                ID TEXT,
+                LATITUDE REAL,
+                LONGITUDE REAL,
+                TIME INTEGER primary key
+            );
+        """.trimIndent()
+        sqLiteDatabase.execSQL(sqlLatLng)
     }
 
     override fun onUpgrade(sqLiteDatabase: SQLiteDatabase, oldVer: Int, newVer: Int) {

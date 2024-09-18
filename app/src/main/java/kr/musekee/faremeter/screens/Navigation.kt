@@ -90,7 +90,7 @@ fun NavigationHost(navController: NavHostController) {
             SelectTransportation()
         }
         composable(BottomNavItem.Results.screenRoute) {
-            Results()
+            Records()
         }
     }
 }

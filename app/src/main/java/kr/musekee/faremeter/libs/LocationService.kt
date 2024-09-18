@@ -20,23 +20,31 @@ import kr.musekee.faremeter.R
 import kr.musekee.faremeter.activities.TaxiActivity
 import kr.musekee.faremeter.datas.taxi
 import kr.musekee.faremeter.datas.unknownTransportation
-import java.util.Date
+import java.security.MessageDigest
 
 
 class LocationService : Service(), LocationListenerCompat {
+    private lateinit var ID: String
+    private val latLngDao = LatLngDao(DatabaseHelper(this))
+
     private lateinit var notification: Notification
     private val mNotificationId = 1
+
     private lateinit var locationManager: LocationManager
     private lateinit var pref: PrefManager
     private lateinit var fareCalcType: String
-    private var transportation = unknownTransportation.id
-    private lateinit var startTime: Date
-    private var averageSpeed: Float = 0f
-    private var topSpeed: Float = 0f
-    private val timePos = mutableListOf<TimePosition>()
 
+    private var transportation = unknownTransportation.id
+
+    @OptIn(ExperimentalStdlibApi::class)
     override fun onCreate() {
         super.onCreate()
+        //region ID 만들기
+        val md = MessageDigest.getInstance("SHA1")
+        md.update(System.currentTimeMillis().toString().toByteArray(Charsets.UTF_8))
+        ID = md.digest().toHexString()
+        //endregion
+
         isRunning = true
     }
 
@@ -45,7 +53,6 @@ class LocationService : Service(), LocationListenerCompat {
             PermissionUtil.openAppInfo(this)
             stopSelf()
         }
-        startTime = Date()
 
         pref = PrefManager(this)
         transportation =  pref.transportation
@@ -67,14 +74,14 @@ class LocationService : Service(), LocationListenerCompat {
         super.onDestroy()
         RecordDao(DatabaseHelper(this)).saveData(
             RecordData(
-                _id = 0,
+                id = ID,
                 fareCalcType = fareCalcType,
                 transportation = transportation,
+                endTime = System.currentTimeMillis(),
                 fare = MeterUtil.fare.value,
-                averageSpeed = averageSpeed,
-                topSpeed = topSpeed,
-                distance = MeterUtil.distance.value,
-                timePos = timePos
+                averageSpeed = MeterUtil.averageSpeed,
+                topSpeed = MeterUtil.topSpeed,
+                distance = MeterUtil.distance.value
             )
         )
         MeterUtil.isDriving.value = false
@@ -98,19 +105,13 @@ class LocationService : Service(), LocationListenerCompat {
     }
 
     override fun onLocationChanged(location: Location) {
-        timePos.add(TimePosition(
+        latLngDao.addData(LatLngData(
+            id = ID,
             latitude = location.latitude,
             longitude = location.longitude,
             time = System.currentTimeMillis()
         ))
         MeterUtil.increaseFare(location.speed)
-        if (averageSpeed == 0f) averageSpeed = location.speed
-        averageSpeed += location.speed
-        averageSpeed /= 2
-
-        if (location.speed > topSpeed)
-            topSpeed = location.speed
-
         notiGosu(false)
     }
 

@@ -6,24 +6,22 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
     fun saveData(data: RecordData): Long {
         val db = dbHelper.writableDatabase
         val cv = ContentValues().apply {
+            put("ID", data.id)
             put("FARE_CALC_TYPE", data.fareCalcType)
             put("TRANSPORTATION", data.transportation)
-            put("END_TIME", data.timePos.last().time)
-            put("TIMES", data.timePos.map { it.time }.joinToString(","))
+            put("END_TIME", data.endTime)
             put("FARE", data.fare)
             put("AVERAGE_SPEED", data.averageSpeed)
             put("TOP_SPEED", data.topSpeed)
             put("DISTANCE", data.distance)
-            put("LATITUDES", data.timePos.map { it.latitude }.joinToString(","))
-            put("LONGITUDES", data.timePos.map { it.longitude }.joinToString(","))
         }
 
         return db.insert("Records", null, cv)
     }
 
-    fun deleteData(id: Int) {
+    fun deleteData(id: String) {
         val db = dbHelper.readableDatabase
-        db.delete("Records", "_ID = $id", null)
+        db.delete("Records", "ID = ?", listOf(id).toTypedArray())
         db.close()
     }
 
@@ -69,23 +67,11 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
             cursor.use {
                 if (it.moveToFirst())
                     do {
-                        val timePos = mutableListOf<TimePosition>()
-                        val latitudes = it.getString(it.getColumnIndexOrThrow("LATITUDES"))
-                        val longitudes = it.getString(it.getColumnIndexOrThrow("LONGITUDES"))
-                        val times = it.getString(it.getColumnIndexOrThrow("TIMES"))
-                        if ((latitudes == "" || longitudes == "" || times == "").not())
-                            times.split(",").mapIndexed { idx, time ->
-                                timePos.add(TimePosition(
-                                    latitude = latitudes.split(",")[idx].toDouble(),
-                                    longitude = longitudes.split(",")[idx].toDouble(),
-                                    time = time.toLong()
-                                ))
-                            }
                         data += RecordData(
-                            _id = it.getInt(it.getColumnIndexOrThrow("_ID")),
+                            id = it.getString(it.getColumnIndexOrThrow("ID")),
                             fareCalcType = it.getString(it.getColumnIndexOrThrow("FARE_CALC_TYPE")),
                             transportation = it.getString(it.getColumnIndexOrThrow("TRANSPORTATION")),
-                            timePos = timePos,
+                            endTime = it.getLong(it.getColumnIndexOrThrow("END_TIME")),
                             fare = it.getInt(it.getColumnIndexOrThrow("FARE")),
                             averageSpeed = it.getFloat(it.getColumnIndexOrThrow("AVERAGE_SPEED")),
                             topSpeed = it.getFloat(it.getColumnIndexOrThrow("TOP_SPEED")),

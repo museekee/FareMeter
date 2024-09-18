@@ -42,6 +42,8 @@ import kr.musekee.faremeter.components.main.MainTitle
 import kr.musekee.faremeter.components.main.RecordItem
 import kr.musekee.faremeter.datas.transportations
 import kr.musekee.faremeter.libs.DatabaseHelper
+import kr.musekee.faremeter.libs.LatLngDao
+import kr.musekee.faremeter.libs.LatLngData
 import kr.musekee.faremeter.libs.RecordDao
 import kr.musekee.faremeter.libs.RecordData
 import kr.musekee.faremeter.libs.bottomBorder
@@ -50,16 +52,18 @@ import kr.musekee.faremeter.ui.theme.nanumGothic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Results() {
+fun Records() {
     val scrollState = rememberScrollState()
     var dialogEnabled by remember { mutableStateOf(false) }
-    var dialogData by remember { mutableStateOf(RecordData(1, "서울특별시", "TAXI", 10000, 30f, 100f, 50.51, listOf())) }
+    var dialogData by remember { mutableStateOf(RecordData("", "서울특별시", "TAXI", 0, 10000, 30f, 100f, 50.51)) }
+    var latLngData by remember { mutableStateOf(listOf<LatLngData>()) }
     val recordDao = RecordDao(DatabaseHelper(LocalContext.current))
+    val latLngDao = LatLngDao(DatabaseHelper(LocalContext.current))
     var isTransportationPopup by remember { mutableStateOf(false) }
     var limit by remember { mutableIntStateOf(0) }
     var transportation: String? by remember { mutableStateOf(null) } // 전체 보기는 null
     var dateOrder by remember { mutableStateOf("DESC") }
-    Log.d("Records", transportation ?: "전체")
+
     Column {
         MainTitle(
             title = stringResource(id = R.string.Results)
@@ -165,8 +169,10 @@ fun Results() {
                 .transportation(transportation)
                 .orderBy("END_TIME", dateOrder)
                 .execute().mapIndexed { index, it ->
-                RecordItem(index, it.transportation, it.fare, it.distance, it.timePos.last().time) {
+                RecordItem(index, it.transportation, it.fare, it.distance, it.endTime) {
+                    Log.d("endtime", it.endTime.toString())
                     dialogData = it
+                    latLngData = latLngDao.getData(it.id)
                     dialogEnabled = true
                 }
             }
@@ -255,10 +261,11 @@ fun Results() {
 
     if (dialogEnabled) {
         RecordDialog(
-            data = dialogData,
+            rData = dialogData,
+            lData = latLngData,
             onDismiss = { dialogEnabled = false },
             onDeleteButtonClick = {
-                recordDao.deleteData(dialogData._id)
+                recordDao.deleteData(dialogData.id)
             },
             onCloseBtnClick = {}
         )
