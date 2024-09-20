@@ -27,6 +27,7 @@ import kr.musekee.faremeter.datas.transportations
 import kr.musekee.faremeter.datas.unknownTransportation
 import kr.musekee.faremeter.libs.bottomBorder
 import kr.musekee.faremeter.libs.cutForDecimal
+import kr.musekee.faremeter.libs.wonFormat
 import kr.musekee.faremeter.ui.theme.lineSeedKr
 import kr.musekee.faremeter.ui.theme.nanumGothic
 import java.util.concurrent.TimeUnit
@@ -76,7 +77,7 @@ fun RecordItem(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
-                text = "${fare}원",
+                text = "${fare.wonFormat()}원",
                 fontFamily = lineSeedKr,
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp

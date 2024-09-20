@@ -56,6 +56,7 @@ import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.libs.RecordDao
 import kr.musekee.faremeter.libs.SetLandscape
 import kr.musekee.faremeter.libs.toSpeedUnit
+import kr.musekee.faremeter.libs.wonFormat
 import kr.musekee.faremeter.transportationCalc.FareType
 import kr.musekee.faremeter.transportationCalc.TaxiCalc
 import kr.musekee.faremeter.ui.theme.lineSeedKr
@@ -217,7 +218,7 @@ class TaxiActivity : ComponentActivity() {
                                 fontSize = 80.sp,
                                 fontWeight = FontWeight.Black,
                                 color = Color.White,
-                                text = "${TaxiCalc.fare.value}원"
+                                text = "${TaxiCalc.fare.value.wonFormat()}원"
                             )
                             Text(
                                 fontSize = 45.sp,

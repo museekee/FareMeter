@@ -137,7 +137,7 @@ class LocationService : Service(), LocationListenerCompat {
 
         val notiBuilder = NotificationCompat.Builder(this, NOTI_CHANNEL)
             .setContentTitle("대중교통 미터기 실행중")
-            .setContentText("운임: ${MeterUtil.fare.value}원 | 주행 거리: ${(MeterUtil.distance.value / 100).toInt() / 10}km | 속도: ${(MeterUtil.speed.value.toSpeedUnit(pref.speedUnit) * 10f).toInt() / 10f} km/h")
+            .setContentText("운임: ${MeterUtil.fare.value.wonFormat()}원 | 주행 거리: ${(MeterUtil.distance.value / 100).toInt() / 10}km | 속도: ${(MeterUtil.speed.value.toSpeedUnit(pref.speedUnit) * 10f).toInt() / 10f} km/h")
             .setSmallIcon(R.drawable.ic_bus)
             .setContentIntent(pendingIntent)
         notification = notiBuilder.build()

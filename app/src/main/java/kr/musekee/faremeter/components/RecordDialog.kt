@@ -60,6 +60,7 @@ import kr.musekee.faremeter.libs.RecordData
 import kr.musekee.faremeter.libs.LatLngData
 import kr.musekee.faremeter.libs.cutForDecimal
 import kr.musekee.faremeter.libs.toSpeedUnit
+import kr.musekee.faremeter.libs.wonFormat
 import kr.musekee.faremeter.ui.theme.lineSeedKr
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -113,7 +114,7 @@ fun RecordDialog(
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 Text(
-                    text = "${rData.fare}원",
+                    text = "${rData.fare.wonFormat()}원",
                     fontSize = 50.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFFFDE4D),
