@@ -1,6 +1,5 @@
 package kr.musekee.faremeter.components.main
 
-import android.util.Log
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -17,28 +16,24 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.route.RouteLineOptions
+import com.kakao.vectormap.route.RouteLinePattern
 import com.kakao.vectormap.route.RouteLineSegment
 import com.kakao.vectormap.route.RouteLineStyle
 import com.kakao.vectormap.route.RouteLineStyles
 import com.kakao.vectormap.route.RouteLineStylesSet
+import kr.musekee.faremeter.R
+import kr.musekee.faremeter.libs.LatLngData
 import kr.musekee.faremeter.libs.makeToast
 
-enum class RouteKakaoMapMode {
-    Normal, NoGPS
-}
 @Composable
 fun RouteKakaoMap(
     modifier: Modifier = Modifier,
-    latitudes: List<Double>, // 위도
-    longitudes: List<Double>, // 경도
-    noGPSLatitudes: List<Pair<Double, Double>>, // GPS 끊김 위도
-    noGPSLongitudes: List<Pair<Double, Double>>, // GPS 끊김 경도
-    mode: RouteKakaoMapMode
+    latLng: List<LatLngData>
 ) {
     val context = LocalContext.current
     val mapView = remember { MapView(context) } // KakaoMapView를 기억하여 재사용할 수 있도록 설정
-    val locationX = if (mode == RouteKakaoMapMode.NoGPS && noGPSLongitudes.isNotEmpty()) noGPSLongitudes[0].first else longitudes[0]
-    val locationY = if (mode == RouteKakaoMapMode.NoGPS && noGPSLatitudes.isNotEmpty()) noGPSLatitudes[0].first else latitudes[0]
+    val locationX = latLng[0].longitude
+    val locationY = latLng[0].latitude
 
     AndroidView(
         modifier = modifier.height(200.dp),
@@ -60,43 +55,52 @@ fun RouteKakaoMap(
 
                             kakaoMap.moveCamera(cameraUpdate)
 
-                            if (mode == RouteKakaoMapMode.Normal)
-                                drawRoute(kakaoMap, Color.Cyan)
-                            else if (mode == RouteKakaoMapMode.NoGPS)
-                                drawNoGPSRoute(kakaoMap, Color.Red)
-
+                            val noGPSTimePos = mutableListOf<Pair<LatLngData, LatLngData>>()
+                            for (i in 1 until latLng.size) {
+                                if (latLng[i].time - latLng[i - 1].time > 5000L) {
+                                    noGPSTimePos.add(Pair(latLng[i - 1], latLng[i]))
+                                }
+                            }
+                            drawRoute(
+                                kakaoMap = kakaoMap,
+                                latLngs = latLng,
+                                width = 16f,
+                                color = Color.Blue
+                            )
+                            noGPSTimePos.map {
+                                drawRoute(
+                                    kakaoMap = kakaoMap,
+                                    latLngs = listOf(it.first, it.second),
+                                    width = 8f,
+                                    color = Color.Red
+                                )
+                            }
                         }
 
-                        fun drawRoute(kakaoMap: KakaoMap, color: Color) {
+                        fun drawRoute(
+                            kakaoMap: KakaoMap,
+                            latLngs: List<LatLngData>,
+                            width: Float = 16f,
+                            color: Color
+                        ) {
                             val layer = kakaoMap.routeLineManager?.layer
-                            val style = RouteLineStyles.from(RouteLineStyle.from(16f, color.toArgb()))
+
+                            val style = RouteLineStyles.from(
+                                RouteLineStyle.from(width, color.toArgb())
+                                    .setPattern(RouteLinePattern.from(
+                                        R.drawable.route_arrow, 12f
+                                    ))
+                            )
                             val segment = RouteLineSegment.from(
-                                latitudes.mapIndexed { index, latitude ->
-                                    Log.d("좌표", "$latitude, ${longitudes[index]}")
-                                    LatLng.from(latitude, longitudes[index])
+                                latLngs.map {
+//                                    Log.d("좌표", "${it.latitude}, ${it.longitude}")
+                                    LatLng.from(it.latitude, it.longitude)
                                 }
                             ).setStyles(style)
 
                             val options = RouteLineOptions.from(segment)
                                 .setStylesSet(RouteLineStylesSet.from(style))
                             layer?.addRouteLine(options)
-                        }
-
-                        fun drawNoGPSRoute(kakaoMap: KakaoMap, color: Color) {
-                            val layer = kakaoMap.routeLineManager?.layer
-                            val style = RouteLineStyles.from(RouteLineStyle.from(16f, color.toArgb()))
-                            noGPSLatitudes.mapIndexed { idx, latitude ->
-                                val segment = RouteLineSegment.from(
-                                    listOf(
-                                        LatLng.from(latitude.first, noGPSLongitudes[idx].first),
-                                        LatLng.from(latitude.second, noGPSLongitudes[idx].second)
-                                    )
-                                ).setStyles(style)
-
-                                val options = RouteLineOptions.from(segment)
-                                    .setStylesSet(RouteLineStylesSet.from(style))
-                                layer?.addRouteLine(options)
-                            }
                         }
 
                         override fun getPosition(): LatLng {

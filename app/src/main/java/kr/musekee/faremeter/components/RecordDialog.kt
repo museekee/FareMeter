@@ -24,7 +24,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -53,11 +52,10 @@ import kr.musekee.faremeter.BuildConfig
 import kr.musekee.faremeter.components.main.RecordDialogContainer
 import kr.musekee.faremeter.components.main.RecordOtherInfo
 import kr.musekee.faremeter.components.main.RouteKakaoMap
-import kr.musekee.faremeter.components.main.RouteKakaoMapMode
 import kr.musekee.faremeter.datas.getTransportationById
+import kr.musekee.faremeter.libs.LatLngData
 import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.libs.RecordData
-import kr.musekee.faremeter.libs.LatLngData
 import kr.musekee.faremeter.libs.cutForDecimal
 import kr.musekee.faremeter.libs.toSpeedUnit
 import kr.musekee.faremeter.libs.wonFormat
@@ -90,7 +88,6 @@ fun RecordDialog(
         val startTime = Date(lData[0].time)
         val endTime = Date(lData.last().time)
         var isMapMoving by remember { mutableStateOf(false) }
-        var showNoGPSMap by remember { mutableStateOf(false) }
         var showRemoveDialog by remember { mutableStateOf(false) }
 
         Card(
@@ -456,55 +453,22 @@ fun RecordDialog(
                         annotatedValue = annotatedEndTime
                     )
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ) {
-                        Text(text = "기본 지도")
-                        Switch(checked = showNoGPSMap, onCheckedChange = {
-                            showNoGPSMap = !showNoGPSMap
-                        })
-                        Text(text = "GPS 끊김 기록")
-                    }
-
                     val noGPSTimePos = mutableListOf<Pair<LatLngData, LatLngData>>()
                     for (i in 1 until lData.size) {
                         if (lData[i].time - lData[i - 1].time > 5000L) {
                             noGPSTimePos.add(Pair(lData[i - 1], lData[i]))
                         }
                     }
-                    if (!showNoGPSMap)
-                        RouteKakaoMap(
-                            modifier = Modifier.onPointerInteractionStartEnd(
-                                onPointerStart = {
-                                    isMapMoving = true },
-                                onPointerEnd = {
-                                    isMapMoving = false
-                                }
-                            ),
-                            latitudes = lData.map { it.latitude },
-                            longitudes = lData.map { it.longitude },
-                            noGPSLatitudes = noGPSTimePos.map { Pair(it.first.latitude, it.second.latitude) },
-                            noGPSLongitudes = noGPSTimePos.map { Pair(it.first.longitude, it.second.longitude) },
-                            mode = RouteKakaoMapMode.Normal
-                        )
-                    else
-                        RouteKakaoMap(
-                            modifier = Modifier.onPointerInteractionStartEnd(
-                                onPointerStart = {
-                                    isMapMoving = true },
-                                onPointerEnd = {
-                                    isMapMoving = false
-                                }
-                            ),
-                            latitudes = lData.map { it.latitude },
-                            longitudes = lData.map { it.longitude },
-                            noGPSLatitudes = noGPSTimePos.map { Pair(it.first.latitude, it.second.latitude) },
-                            noGPSLongitudes = noGPSTimePos.map { Pair(it.first.longitude, it.second.longitude) },
-                            mode = RouteKakaoMapMode.NoGPS
-                        )
+                    RouteKakaoMap(
+                        modifier = Modifier.onPointerInteractionStartEnd(
+                            onPointerStart = {
+                                isMapMoving = true },
+                            onPointerEnd = {
+                                isMapMoving = false
+                            }
+                        ),
+                        latLng = lData
+                    )
                 }
                 //endregion
                 Row(
