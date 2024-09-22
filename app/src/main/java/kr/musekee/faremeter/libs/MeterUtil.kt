@@ -25,6 +25,8 @@ object MeterUtil {
     var gpsStatus: MutableState<GPSStatus> = mutableStateOf(GPSStatus.UNSTABLE)
     var isDriving: MutableState<Boolean> = mutableStateOf(false)
 
+    private var lastTime = System.currentTimeMillis()
+
     var averageSpeed: Float = -1f
     var topSpeed: Float = 0f
 
@@ -47,6 +49,7 @@ object MeterUtil {
     }
 
     fun increaseFare(curSpeed: Float) {
+        val curTime = System.currentTimeMillis()
         val (mFare, mDistance, mSpeed) = when (transportation) {
             taxi.id -> taxiCalc.increaseFare(curSpeed)
             else -> Triple(mutableIntStateOf(0), mutableDoubleStateOf(0.0), mutableFloatStateOf(0.0f))
@@ -55,13 +58,14 @@ object MeterUtil {
         fare.value = mFare.value
         distance.value = mDistance.value
         speed.value = mSpeed.value
-
         if (averageSpeed == -1f) averageSpeed = curSpeed
-        else {
+        else if ((curTime - lastTime > 5000).not()) { // GPS 안 잡히지 않았다면
             averageSpeed += curSpeed
             averageSpeed /= 2
         }
         if (topSpeed < curSpeed)
             topSpeed = curSpeed
+
+        lastTime = curTime
     }
 }
