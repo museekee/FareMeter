@@ -10,6 +10,7 @@ import kr.musekee.faremeter.datas.TaxiTransportation
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.math.abs
 
 enum class FareType {
     TIME,
@@ -106,7 +107,7 @@ object TaxiCalc {
             nightFare.value += nightAdditionalFare.toInt()
             intercityFare.value += intercityAdditionalFare.toInt()
             fare.value += (runFare + nightAdditionalFare + intercityAdditionalFare).toInt()
-            counter.value += runDistance
+            counter.value += (abs(counter.value % runDistance) + 1) * runDistance
             _counter.value = runDistance
         }
 
