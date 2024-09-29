@@ -59,9 +59,8 @@ object MeterUtil {
         distance.value = mDistance.value
         speed.value = mSpeed.value
         if (averageSpeed == -1f) averageSpeed = curSpeed
-        else if ((curTime - lastTime > 5000).not()) { // GPS 안 잡히지 않았다면
-            averageSpeed += curSpeed
-            averageSpeed /= 2
+        else if (curTime - lastTime < 5000) { // GPS 안 잡히지 않았다면
+            averageSpeed = (averageSpeed + curSpeed) / 2
         }
         if (topSpeed < curSpeed)
             topSpeed = curSpeed
