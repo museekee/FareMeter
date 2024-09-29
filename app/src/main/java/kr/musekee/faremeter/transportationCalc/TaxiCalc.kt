@@ -107,7 +107,7 @@ object TaxiCalc {
             nightFare.value += nightAdditionalFare.toInt()
             intercityFare.value += intercityAdditionalFare.toInt()
             fare.value += (runFare + nightAdditionalFare + intercityAdditionalFare).toInt()
-            counter.value += (abs(counter.value % runDistance) + 1) * runDistance
+            counter.value += (abs(counter.value / runDistance) + 1) * runDistance
             _counter.value = runDistance
         }
 

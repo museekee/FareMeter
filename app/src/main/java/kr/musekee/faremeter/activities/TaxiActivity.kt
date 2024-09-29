@@ -60,6 +60,7 @@ import kr.musekee.faremeter.libs.wonFormat
 import kr.musekee.faremeter.transportationCalc.FareType
 import kr.musekee.faremeter.transportationCalc.TaxiCalc
 import kr.musekee.faremeter.ui.theme.lineSeedKr
+import kotlin.math.round
 
 class TaxiActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -251,7 +252,7 @@ class TaxiActivity : ComponentActivity() {
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             color = Color.White,
-                            text = "주행 거리: ${(TaxiCalc.distance.value / 100).toInt() / 10}km"
+                            text = "주행 거리: ${round(TaxiCalc.distance.value / 100) / 10}km"
                         )
                         Text(
                             modifier = Modifier
