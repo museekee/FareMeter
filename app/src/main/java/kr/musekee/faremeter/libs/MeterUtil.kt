@@ -1,5 +1,6 @@
 package kr.musekee.faremeter.libs
 
+import android.location.Location
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
@@ -27,7 +28,11 @@ object MeterUtil {
 
     private var lastTime = System.currentTimeMillis()
 
-    var averageSpeed: Float = -1f
+    private var previousLocation: Location? = null
+    private var totalDistance: Float = 0f
+    private var totalTime: Long = 0
+
+    var averageSpeed: Float = 0f
     var topSpeed: Float = 0f
 
     fun init(transportation: String, calcType: String) {
@@ -43,12 +48,12 @@ object MeterUtil {
         fare.value = 0
         distance.value = 0.0
         speed.value = 0.0f
-        averageSpeed = -1f
+        averageSpeed = 0f
         topSpeed = 0f
         taxiCalc.resetValues()
     }
 
-    fun increaseFare(curSpeed: Float) {
+    fun increaseFare(curSpeed: Float, location: Location) {
         val curTime = System.currentTimeMillis()
         val (mFare, mDistance, mSpeed) = when (transportation) {
             taxi.id -> taxiCalc.increaseFare(curSpeed)
@@ -58,13 +63,16 @@ object MeterUtil {
         fare.value = mFare.value
         distance.value = mDistance.value
         speed.value = mSpeed.value
-        if (averageSpeed == -1f) averageSpeed = curSpeed
-        else if (curTime - lastTime < 5000) { // GPS 안 잡히지 않았다면
-            averageSpeed = (averageSpeed + curSpeed) / 2
+
+        if (previousLocation != null) {
+            totalTime += (System.currentTimeMillis() - previousLocation!!.time)
         }
+        averageSpeed = if (totalTime > 0) totalDistance / (totalTime / 1000) else 0f
+
         if (topSpeed < curSpeed)
             topSpeed = curSpeed
 
+        previousLocation = location
         lastTime = curTime
     }
 }

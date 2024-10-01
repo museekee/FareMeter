@@ -111,7 +111,7 @@ class LocationService : Service(), LocationListenerCompat {
             longitude = location.longitude,
             time = System.currentTimeMillis()
         ))
-        MeterUtil.increaseFare(location.speed)
+        MeterUtil.increaseFare(location.speed, location)
         notiGosu(false)
     }
 
