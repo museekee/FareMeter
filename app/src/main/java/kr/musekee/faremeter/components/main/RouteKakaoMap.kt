@@ -22,13 +22,13 @@ import com.kakao.vectormap.route.RouteLineStyle
 import com.kakao.vectormap.route.RouteLineStyles
 import com.kakao.vectormap.route.RouteLineStylesSet
 import kr.musekee.faremeter.R
-import kr.musekee.faremeter.libs.LatLngData
+import kr.musekee.faremeter.libs.DrivingData
 import kr.musekee.faremeter.libs.makeToast
 
 @Composable
 fun RouteKakaoMap(
     modifier: Modifier = Modifier,
-    latLng: List<LatLngData>
+    latLng: List<DrivingData>
 ) {
     val context = LocalContext.current
     val mapView = remember { MapView(context) } // KakaoMapView를 기억하여 재사용할 수 있도록 설정
@@ -55,7 +55,7 @@ fun RouteKakaoMap(
 
                             kakaoMap.moveCamera(cameraUpdate)
 
-                            val noGPSTimePos = mutableListOf<Pair<LatLngData, LatLngData>>()
+                            val noGPSTimePos = mutableListOf<Pair<DrivingData, DrivingData>>()
                             for (i in 1 until latLng.size) {
                                 if (latLng[i].time - latLng[i - 1].time > 5000L) {
                                     noGPSTimePos.add(Pair(latLng[i - 1], latLng[i]))
@@ -79,7 +79,7 @@ fun RouteKakaoMap(
 
                         fun drawRoute(
                             kakaoMap: KakaoMap,
-                            latLngs: List<LatLngData>,
+                            latLngs: List<DrivingData>,
                             width: Float = 16f,
                             color: Color
                         ) {

@@ -25,7 +25,7 @@ import java.security.MessageDigest
 
 class LocationService : Service(), LocationListenerCompat {
     private lateinit var ID: String
-    private val latLngDao = LatLngDao(DatabaseHelper(this))
+    private val drivingDataDao = DrivingDataDao(DatabaseHelper(this))
 
     private lateinit var notification: Notification
     private val mNotificationId = 1
@@ -79,8 +79,6 @@ class LocationService : Service(), LocationListenerCompat {
                 transportation = transportation,
                 endTime = System.currentTimeMillis(),
                 fare = MeterUtil.fare.value,
-                averageSpeed = MeterUtil.averageSpeed,
-                topSpeed = MeterUtil.topSpeed,
                 distance = MeterUtil.distance.value
             )
         )
@@ -105,13 +103,14 @@ class LocationService : Service(), LocationListenerCompat {
     }
 
     override fun onLocationChanged(location: Location) {
-        latLngDao.addData(LatLngData(
+        drivingDataDao.addData(DrivingData(
             id = ID,
             latitude = location.latitude,
             longitude = location.longitude,
+            speed = location.speed,
             time = System.currentTimeMillis()
         ))
-        MeterUtil.increaseFare(location.speed, location)
+        MeterUtil.increaseFare(location.speed)
         notiGosu(false)
     }
 

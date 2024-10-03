@@ -11,8 +11,6 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
             put("TRANSPORTATION", data.transportation)
             put("END_TIME", data.endTime)
             put("FARE", data.fare)
-            put("AVERAGE_SPEED", data.averageSpeed)
-            put("TOP_SPEED", data.topSpeed)
             put("DISTANCE", data.distance)
         }
 
@@ -73,8 +71,6 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
                             transportation = it.getString(it.getColumnIndexOrThrow("TRANSPORTATION")),
                             endTime = it.getLong(it.getColumnIndexOrThrow("END_TIME")),
                             fare = it.getInt(it.getColumnIndexOrThrow("FARE")),
-                            averageSpeed = it.getFloat(it.getColumnIndexOrThrow("AVERAGE_SPEED")),
-                            topSpeed = it.getFloat(it.getColumnIndexOrThrow("TOP_SPEED")),
                             distance = it.getDouble(it.getColumnIndexOrThrow("DISTANCE"))
                         )
                     } while (it.moveToNext())

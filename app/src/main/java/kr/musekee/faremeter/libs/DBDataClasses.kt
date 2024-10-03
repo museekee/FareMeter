@@ -6,14 +6,13 @@ data class RecordData(
     val transportation: String, // 교통수단 ID
     val endTime: Long, // 끝시간
     val fare: Int, // 운임
-    val averageSpeed: Float, // 평균 속도 m/s
-    val topSpeed: Float, // 최고 속도 m/s
     val distance: Double, // 거리 m
 )
 
-data class LatLngData(
+data class DrivingData(
     val id: String,
     val latitude: Double, // 37.00001
     val longitude: Double, // 130.75745
+    val speed: Float, // m/s
     val time: Long // ms
 )

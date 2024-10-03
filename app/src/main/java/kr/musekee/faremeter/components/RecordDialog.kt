@@ -1,5 +1,6 @@
 package kr.musekee.faremeter.components
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -53,7 +54,7 @@ import kr.musekee.faremeter.components.main.RecordDialogContainer
 import kr.musekee.faremeter.components.main.RecordOtherInfo
 import kr.musekee.faremeter.components.main.RouteKakaoMap
 import kr.musekee.faremeter.datas.getTransportationById
-import kr.musekee.faremeter.libs.LatLngData
+import kr.musekee.faremeter.libs.DrivingData
 import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.libs.RecordData
 import kr.musekee.faremeter.libs.cutForDecimal
@@ -69,7 +70,9 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun RecordDialog(
     rData: RecordData,
-    lData: List<LatLngData>,
+    lData: List<DrivingData>,
+    topSpeed: Float,
+    averageSpeed: Float,
     onCloseBtnClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
     onDismiss: () -> Unit
@@ -273,7 +276,7 @@ fun RecordDialog(
                                     .size(100.dp)
                             ) {
                                 val startAngle = 225f - 90f
-                                val sweepAngle = (rData.averageSpeed / rData.topSpeed) * 270
+                                val sweepAngle = (averageSpeed / topSpeed) * 270
 
                                 val strokeWidth = 7.5.dp.toPx()
                                 val radius = (100.dp.toPx() - strokeWidth) / 2
@@ -318,13 +321,14 @@ fun RecordDialog(
                             ) {
                                 val annotatedSpeedString = buildAnnotatedString {
                                     withStyle(SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
-                                        append(rData.averageSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
+                                        Log.d("RD", averageSpeed.toString())
+                                        append(averageSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
                                     }
                                     withStyle(SpanStyle(fontSize = 12.sp)) {
                                         append(" ${prefManager.speedUnit}\n")
                                     }
                                     withStyle(SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
-                                        append(rData.topSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
+                                        append(topSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
                                     }
                                     withStyle(SpanStyle(fontSize = 12.sp)) {
                                         append(" ${prefManager.speedUnit}")
@@ -453,7 +457,7 @@ fun RecordDialog(
                         annotatedValue = annotatedEndTime
                     )
 
-                    val noGPSTimePos = mutableListOf<Pair<LatLngData, LatLngData>>()
+                    val noGPSTimePos = mutableListOf<Pair<DrivingData, DrivingData>>()
                     for (i in 1 until lData.size) {
                         if (lData[i].time - lData[i - 1].time > 5000L) {
                             noGPSTimePos.add(Pair(lData[i - 1], lData[i]))

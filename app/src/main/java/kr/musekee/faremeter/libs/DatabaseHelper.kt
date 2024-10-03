@@ -14,17 +14,16 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 TRANSPORTATION TEXT,
                 END_TIME INTEGER,
                 FARE INTEGER,
-                AVERAGE_SPEED REAL,
-                TOP_SPEED REAL,
                 DISTANCE REAL
             );
         """.trimIndent()
         sqLiteDatabase.execSQL(sqlRecords)
         val sqlLatLng = """
-            create table LatLng (
+            create table DrivingData (
                 ID TEXT,
                 LATITUDE REAL,
                 LONGITUDE REAL,
+                SPEED REAL,
                 TIME INTEGER primary key
             );
         """.trimIndent()

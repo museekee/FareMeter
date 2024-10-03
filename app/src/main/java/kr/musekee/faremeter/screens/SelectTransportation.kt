@@ -20,6 +20,8 @@ import kr.musekee.faremeter.activities.TaxiActivity
 import kr.musekee.faremeter.components.main.MainButton
 import kr.musekee.faremeter.datas.taxi
 import kr.musekee.faremeter.libs.DatabaseHelper
+import kr.musekee.faremeter.libs.DrivingData
+import kr.musekee.faremeter.libs.DrivingDataDao
 import kr.musekee.faremeter.libs.RecordDao
 import kr.musekee.faremeter.libs.RecordData
 import kr.musekee.faremeter.libs.SetPortrait
@@ -30,6 +32,7 @@ fun SelectTransportation() {
     SetPortrait(context)
 
     val recordDao = RecordDao(DatabaseHelper(LocalContext.current))
+    val drivingDataDao = DrivingDataDao(DatabaseHelper(LocalContext.current))
 
     Column {
         Text(
@@ -64,12 +67,29 @@ fun SelectTransportation() {
                         transportation = taxi.id,
                         endTime = 1726264574667,
                         fare = 195020,
-                        averageSpeed = 0.0141056617721915f,
-                        topSpeed = 40.810001373291f,
                         distance = 233670.910437927
                     ))
+                    val dts: List<Pair<Float, Long>> = listOf(
+                        Pair(10f, 1),
+                        Pair(15f, 2),
+                        Pair(13f, 3),
+                        Pair(8f, 5030),
+                        Pair(0f, 10000),
+                        Pair(9f, 11262),
+                        Pair(79f, 41600),
+                        Pair(20f, 42000),
+                    )
+                    dts.map {
+                        drivingDataDao.addData(DrivingData(
+                            id = "TESTDATA",
+                            latitude = 37.5,
+                            longitude = 130.5,
+                            speed = it.first,
+                            time = it.second
+                        ))
+                    }
                 },
-                enabled = false
+//                enabled = false
             ) {
                 Text(text = "비밀 버튼")
             }
