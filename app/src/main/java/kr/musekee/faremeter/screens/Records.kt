@@ -22,6 +22,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,8 +59,8 @@ fun Records() {
     var dialogEnabled by remember { mutableStateOf(false) }
     var dialogData by remember { mutableStateOf(RecordData("", "서울특별시", "TAXI", 0, 10000, 50.51)) }
     var drivingData by remember { mutableStateOf(listOf<DrivingData>()) }
-    var topSpeed by remember { mutableFloatStateOf(0f) }
-    var averageSpeed by remember { mutableFloatStateOf(0f) }
+    var topSpeed by remember { mutableDoubleStateOf(0.0) }
+    var averageSpeed by remember { mutableDoubleStateOf(0.0) }
     val recordDao = RecordDao(DatabaseHelper(LocalContext.current))
     val drivingDataDao = DrivingDataDao(DatabaseHelper(LocalContext.current))
     var isTransportationPopup by remember { mutableStateOf(false) }
@@ -178,6 +179,7 @@ fun Records() {
                     drivingData = drivingDataDao.getData(it.id)
                     topSpeed = drivingDataDao.getTopSpeed(it.id)
                     averageSpeed = drivingDataDao.getAverageSpeed(it.id)
+//                    drivingDataDao.AVGTEST(it.id)
                     dialogEnabled = true
                 }
             }

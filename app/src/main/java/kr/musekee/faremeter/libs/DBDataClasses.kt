@@ -13,6 +13,6 @@ data class DrivingData(
     val id: String,
     val latitude: Double, // 37.00001
     val longitude: Double, // 130.75745
-    val speed: Float, // m/s
+    val speed: Double, // m/s
     val time: Long // ms
 )

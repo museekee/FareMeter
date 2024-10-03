@@ -71,8 +71,8 @@ import java.util.concurrent.TimeUnit
 fun RecordDialog(
     rData: RecordData,
     lData: List<DrivingData>,
-    topSpeed: Float,
-    averageSpeed: Float,
+    topSpeed: Double,
+    averageSpeed: Double,
     onCloseBtnClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
     onDismiss: () -> Unit
@@ -303,7 +303,7 @@ fun RecordDialog(
                                 drawArc(
                                     color = transportationColor,
                                     startAngle = startAngle,
-                                    sweepAngle = sweepAngle,
+                                    sweepAngle = sweepAngle.toFloat(),
                                     useCenter = false,
                                     style = Stroke(width = strokeWidth),
                                     topLeft = Offset(centerX - radius, centerY - radius),
@@ -321,7 +321,6 @@ fun RecordDialog(
                             ) {
                                 val annotatedSpeedString = buildAnnotatedString {
                                     withStyle(SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
-                                        Log.d("RD", averageSpeed.toString())
                                         append(averageSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
                                     }
                                     withStyle(SpanStyle(fontSize = 12.sp)) {

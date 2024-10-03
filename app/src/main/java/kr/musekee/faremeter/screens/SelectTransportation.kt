@@ -69,15 +69,15 @@ fun SelectTransportation() {
                         fare = 195020,
                         distance = 233670.910437927
                     ))
-                    val dts: List<Pair<Float, Long>> = listOf(
-                        Pair(10f, 1),
-                        Pair(15f, 2),
-                        Pair(13f, 3),
-                        Pair(8f, 5030),
-                        Pair(0f, 10000),
-                        Pair(9f, 11262),
-                        Pair(79f, 41600),
-                        Pair(20f, 42000),
+                    val dts: List<Pair<Double, Long>> = listOf(
+                        Pair(10.0, 1),
+                        Pair(15.0, 2),
+                        Pair(13.0, 3),
+                        Pair(8.0, 5030),
+                        Pair(0.0, 10000),
+                        Pair(9.0, 11262),
+                        Pair(79.0, 41600),
+                        Pair(20.0, 42000),
                     )
                     dts.map {
                         drivingDataDao.addData(DrivingData(
@@ -89,7 +89,7 @@ fun SelectTransportation() {
                         ))
                     }
                 },
-//                enabled = false
+                enabled = false
             ) {
                 Text(text = "비밀 버튼")
             }

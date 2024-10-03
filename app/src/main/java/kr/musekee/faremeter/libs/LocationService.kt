@@ -107,7 +107,7 @@ class LocationService : Service(), LocationListenerCompat {
             id = ID,
             latitude = location.latitude,
             longitude = location.longitude,
-            speed = location.speed,
+            speed = location.speed.toDouble(),
             time = System.currentTimeMillis()
         ))
         MeterUtil.increaseFare(location.speed)
