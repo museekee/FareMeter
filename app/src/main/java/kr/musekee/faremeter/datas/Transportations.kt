@@ -2,6 +2,8 @@ package kr.musekee.faremeter.datas
 
 import androidx.compose.ui.graphics.Color
 import kr.musekee.faremeter.R
+import kr.musekee.faremeter.activities.TaxiActivity
+import kr.musekee.faremeter.activities.UnknownActivity
 
 /**
  * 모든 요금의 단위는 원 (￦)이고,
@@ -10,8 +12,8 @@ import kr.musekee.faremeter.R
  * 그리고 모든 Rate는 소수 (0.2, 0.4)로 한다.
  */
 
-val unknownTransportation = Transportation("UNKNOWN", R.drawable.ic_taxi, R.string.Unknown, Color(0xFFBBBBBB), listOf())
-val taxi = Transportation("TAXI", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), TaxiData.fareCalcTypes)
+val unknownTransportation = Transportation("UNKNOWN", UnknownActivity::class.java, R.drawable.ic_taxi, R.string.Unknown, Color(0xFFBBBBBB), listOf())
+val taxi = Transportation("TAXI", TaxiActivity::class.java, R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), TaxiData.fareCalcTypes)
 //val bus = Transportation("BUS", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
 //val subway = Transportation("SUBWAY", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
 //val tram = Transportation("TRAM", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
@@ -31,6 +33,7 @@ fun getTransportationById(id: String): Transportation {
 
 data class Transportation(
     val id: String, // TAXI
+    val activity: Class<*>,
     val icon: Int, // R.drawable.ic_taxi
     val label: Int, // R.string.Taxi
     val color: Color,

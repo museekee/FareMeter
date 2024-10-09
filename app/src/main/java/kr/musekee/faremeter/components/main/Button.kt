@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MainButton(label: String, icon: Int, color: Color, onClick: () -> Unit) {
+fun MainButton(label: String, icon: Int, color: Color, enabled: Boolean = true, onClick: () -> Unit) {
     Button(
         modifier = Modifier
             .size(150.dp)
@@ -28,6 +28,7 @@ fun MainButton(label: String, icon: Int, color: Color, onClick: () -> Unit) {
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent
         ),
+        enabled = enabled,
         onClick = onClick
     ) {
         Column {

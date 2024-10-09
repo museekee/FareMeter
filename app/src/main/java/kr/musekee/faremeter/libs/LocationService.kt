@@ -86,6 +86,7 @@ class LocationService : Service(), LocationListenerCompat {
 
         locationManager.removeUpdates(this)
         MeterUtil.resetValues()
+        pref.transportation = unknownTransportation.id
         stopForeground(STOP_FOREGROUND_REMOVE)
         isRunning = false
     }

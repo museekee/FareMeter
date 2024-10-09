@@ -16,12 +16,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kr.musekee.faremeter.activities.TaxiActivity
 import kr.musekee.faremeter.components.main.MainButton
 import kr.musekee.faremeter.datas.taxi
+import kr.musekee.faremeter.datas.transportations
+import kr.musekee.faremeter.datas.unknownTransportation
 import kr.musekee.faremeter.libs.DatabaseHelper
 import kr.musekee.faremeter.libs.DrivingData
 import kr.musekee.faremeter.libs.DrivingDataDao
+import kr.musekee.faremeter.libs.PrefManager
 import kr.musekee.faremeter.libs.RecordDao
 import kr.musekee.faremeter.libs.RecordData
 import kr.musekee.faremeter.libs.SetPortrait
@@ -31,6 +33,7 @@ fun SelectTransportation() {
     val context = LocalContext.current
     SetPortrait(context)
 
+    val pref = PrefManager(context)
     val recordDao = RecordDao(DatabaseHelper(LocalContext.current))
     val drivingDataDao = DrivingDataDao(DatabaseHelper(LocalContext.current))
 
@@ -49,14 +52,19 @@ fun SelectTransportation() {
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            MainButton(
-                label = stringResource(id = taxi.label),
-                icon = taxi.icon,
-                color = taxi.color,
-                onClick = {
-                    context.startActivity(Intent(context, TaxiActivity::class.java))
-                }
-            )
+
+            transportations.map {
+                val enabled = pref.transportation == unknownTransportation.id || pref.transportation == it.id
+                MainButton(
+                    label = stringResource(id = it.label),
+                    icon = it.icon,
+                    color = it.color,
+                    enabled = enabled,
+                    onClick = {
+                        context.startActivity(Intent(context, it.activity))
+                    }
+                )
+            }
 //            makeToast(LocalContext.current, "이거도ㅓㅣㅁ?")
 
             Button(
