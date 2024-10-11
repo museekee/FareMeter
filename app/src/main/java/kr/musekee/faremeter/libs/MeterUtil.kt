@@ -5,8 +5,9 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import kr.musekee.faremeter.datas.taxi
+import kr.musekee.faremeter.datas.getTransportationById
 import kr.musekee.faremeter.datas.unknownTransportation
+import kr.musekee.faremeter.transportationCalc.CommonCalc
 import kr.musekee.faremeter.transportationCalc.TaxiCalc
 
 enum class GPSStatus {
@@ -17,6 +18,7 @@ enum class GPSStatus {
 object MeterUtil {
     private var transportation = unknownTransportation.id
 
+    private lateinit var calc: CommonCalc
     private val taxiCalc = TaxiCalc
 
     var fare: MutableState<Int> = mutableIntStateOf(0)
@@ -29,6 +31,8 @@ object MeterUtil {
         this@MeterUtil.transportation = transportation
 
         taxiCalc.init(calcType)
+        calc = getTransportationById(transportation).calc
+        calc.init(calcType)
         gpsStatus.value = GPSStatus.UNSTABLE
         resetValues()
     }
@@ -42,13 +46,10 @@ object MeterUtil {
     }
 
     fun increaseFare(curSpeed: Float) {
-        val (mFare, mDistance, mSpeed) = when (transportation) {
-            taxi.id -> taxiCalc.increaseFare(curSpeed)
-            else -> Triple(mutableIntStateOf(0), mutableDoubleStateOf(0.0), mutableFloatStateOf(0.0f))
-        }
+        calc.increaseFare(curSpeed)
         gpsStatus.value = GPSStatus.STABLE
-        fare.value = mFare.value
-        distance.value = mDistance.value
-        speed.value = mSpeed.value
+        fare.value = calc.fare.value
+        distance.value = calc.distance.value
+        speed.value = curSpeed
     }
 }

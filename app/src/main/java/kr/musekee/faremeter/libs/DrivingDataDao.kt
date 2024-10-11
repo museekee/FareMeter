@@ -42,7 +42,7 @@ class DrivingDataDao(private val dbHelper: DatabaseHelper) {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery("SELECT SPEED FROM DrivingData WHERE ID = ? ORDER BY SPEED DESC", arrayOf(id))
         cursor.moveToFirst()
-        val speed = cursor.getDouble(cursor.getColumnIndexOrThrow("SPEED"))
+        val speed = if (cursor.getColumnIndex("SPEED") == -1) 0.0 else cursor.getDouble(cursor.getColumnIndexOrThrow("SPEED"))
         cursor.close()
         return speed
     }

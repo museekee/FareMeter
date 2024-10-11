@@ -17,7 +17,7 @@ enum class FareType {
     DISTANCE
 }
 
-object TaxiCalc {
+object TaxiCalc: CommonCalc {
     private var lastUpdateTime = 0L
 
     private var minFare = 0
@@ -30,12 +30,12 @@ object TaxiCalc {
     private var nightRate: List<Double> = listOf()
     private var nightTime: List<List<Int>> = listOf()
 
-    val fare: MutableState<Int> = mutableIntStateOf(0)
-    val nightFare: MutableState<Int> = mutableIntStateOf(0)
-    val intercityFare: MutableState<Int> = mutableIntStateOf(0)
+    override val fare: MutableState<Int> = mutableIntStateOf(0)
+    private val nightFare: MutableState<Int> = mutableIntStateOf(0)
+    private val intercityFare: MutableState<Int> = mutableIntStateOf(0)
 
-    val counter: MutableState<Int> = mutableIntStateOf(0)
-    val distance: MutableState<Double> = mutableDoubleStateOf(0.0) // m
+    override val counter: MutableState<Int> = mutableIntStateOf(0)
+    override val distance: MutableState<Double> = mutableDoubleStateOf(0.0) // m
     val speed: MutableState<Float> = mutableFloatStateOf(0.0f) // m/s
     val _counter: MutableState<Int> = mutableIntStateOf(0) // counter 최대값
     val fareType: MutableState<FareType> = mutableStateOf(FareType.TIME)
@@ -45,7 +45,8 @@ object TaxiCalc {
 
     private lateinit var transportationData: TaxiTransportation
 
-    fun init(calcType: String) {
+    override fun init(calcType: String) {
+        super.init(calcType)
         transportationData = TaxiData.getData(calcType)
 
         transportationData.let {
@@ -77,7 +78,8 @@ object TaxiCalc {
         isIntercity = false
     }
 
-    fun increaseFare(curSpeed: Float): Triple<MutableState<Int>, MutableState<Double>, MutableState<Float>> {
+    override fun increaseFare(curSpeed: Float) {
+        super.increaseFare(curSpeed)
         val curTime = System.currentTimeMillis()
 
         if (lastUpdateTime == 0L)
@@ -85,8 +87,6 @@ object TaxiCalc {
 
         val deltaTime = (curTime - lastUpdateTime).toInt() / 1000f
         lastUpdateTime = curTime
-
-        speed.value = curSpeed
 
         val curDistance = speed.value * deltaTime
         distance.value += curDistance // m
@@ -112,8 +112,6 @@ object TaxiCalc {
         }
 
         speed.value = curSpeed
-
-        return Triple(fare, distance, speed)
     }
 
     fun toggleNight(enabled: Boolean) {
