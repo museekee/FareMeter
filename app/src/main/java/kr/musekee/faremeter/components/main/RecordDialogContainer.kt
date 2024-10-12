@@ -23,7 +23,7 @@ fun RecordDialogContainer(
 ) {
     Column(
         modifier = Modifier
-            .width(125.dp)
+            .width(150.dp)
             .background(Color(0xFF151515), RoundedCornerShape(20.dp))
             .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp),

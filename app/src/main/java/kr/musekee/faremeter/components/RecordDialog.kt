@@ -1,6 +1,5 @@
 package kr.musekee.faremeter.components
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -40,6 +39,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +48,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.kakao.vectormap.KakaoMapSdk
 import kr.musekee.faremeter.BuildConfig
 import kr.musekee.faremeter.components.main.RecordDialogContainer
@@ -84,7 +85,8 @@ fun RecordDialog(
         onDismissRequest = {
             KakaoMapSdk.init(context, BuildConfig.KAKAO_API_KEY) // 초기화 해야 현재 루트가 사라짐
             onDismiss()
-        }
+        },
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         val transportation = getTransportationById(rData.transportation)
         val transportationColor = transportation.color
@@ -95,9 +97,8 @@ fun RecordDialog(
 
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .width(300.dp)
-                .height(560.dp)
+                .width(375.dp)
+                .height(600.dp)
                 .padding(10.dp)
                 .verticalScroll(
                     rememberScrollState(),
@@ -140,19 +141,21 @@ fun RecordDialog(
                 )
                 //region 그래프들
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(15.dp)
                 ) {
+                    val graphSize = 130.dp
                     RecordDialogContainer(
                         title = "시간"
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(100.dp)
+                                .size(graphSize)
                         ) {
                             //region 원 그래프
                             Canvas(
                                 modifier = Modifier
-                                    .size(100.dp)
+                                    .size(graphSize)
                             ) {
                                 // 1분 당 0.5도
                                 val startAngle = (convertToMinutes(startTime) / 2f) - 90 // 기본 0도는 3시 방향인 듯...
@@ -166,7 +169,7 @@ fun RecordDialog(
                                 val isFullSizeValue = (endTime.time - startTime.time) / 1000 >= 43200
 
                                 val strokeWidth = 7.5.dp.toPx()
-                                val radius = (100.dp.toPx() - strokeWidth) / 2
+                                val radius = (graphSize.toPx() - strokeWidth) / 2
 
                                 val centerX = size.width / 2f
                                 val centerY = radius + strokeWidth / 2
@@ -174,7 +177,7 @@ fun RecordDialog(
                                 // 배경
                                 drawCircle(
                                     color = Color(0xFF0A0A0A),
-                                    radius = 50.dp.toPx()
+                                    radius = (graphSize/2).toPx()
                                 )
                                 // 게이지 배경
                                 drawArc(
@@ -223,16 +226,16 @@ fun RecordDialog(
                                 val hours = TimeUnit.MILLISECONDS.toHours(duration)
                                 val minutes = TimeUnit.MILLISECONDS.toMinutes(duration) - TimeUnit.HOURS.toMinutes(hours)
                                 val annotatedTimeString = buildAnnotatedString {
-                                    withStyle(SpanStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold)) {
+                                    withStyle(SpanStyle(fontSize = 27.sp, fontWeight = FontWeight.Bold)) {
                                         append(hours.toString())
                                     }
-                                    withStyle(SpanStyle(fontSize = 10.sp)) {
+                                    withStyle(SpanStyle(fontSize = 13.sp)) {
                                         append("시간 ")
                                     }
-                                    withStyle(SpanStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold)) {
+                                    withStyle(SpanStyle(fontSize = 27.sp, fontWeight = FontWeight.Bold)) {
                                         append(minutes.toString())
                                     }
-                                    withStyle(SpanStyle(fontSize = 10.sp)) {
+                                    withStyle(SpanStyle(fontSize = 13.sp)) {
                                         append("분")
                                     }
                                 }
@@ -254,7 +257,7 @@ fun RecordDialog(
                                         .fillMaxWidth(),
                                     text = "${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}",
                                     fontFamily = lineSeedKr,
-                                    fontSize = 11.sp,
+                                    fontSize = 13.sp,
                                     textAlign = TextAlign.Center,
                                     color = transportationColor
                                 )
@@ -268,18 +271,18 @@ fun RecordDialog(
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(100.dp)
+                                .size(graphSize)
                         ) {
                             //region 원 그래프
                             Canvas(
                                 modifier = Modifier
-                                    .size(100.dp)
+                                    .size(graphSize)
                             ) {
                                 val startAngle = 225f - 90f
                                 val sweepAngle = (averageSpeed / topSpeed) * 270
 
                                 val strokeWidth = 7.5.dp.toPx()
-                                val radius = (100.dp.toPx() - strokeWidth) / 2
+                                val radius = (graphSize.toPx() - strokeWidth) / 2
 
                                 val centerX = size.width / 2f
                                 val centerY = radius + strokeWidth / 2
@@ -287,7 +290,7 @@ fun RecordDialog(
                                 // 배경
                                 drawCircle(
                                     color = Color(0xFF0A0A0A),
-                                    radius = 50.dp.toPx()
+                                    radius = 65.dp.toPx()
                                 )
                                 // 게이지 배경
                                 drawArc(
@@ -320,17 +323,35 @@ fun RecordDialog(
                                 verticalArrangement = Arrangement.spacedBy(5.dp)
                             ) {
                                 val annotatedSpeedString = buildAnnotatedString {
-                                    withStyle(SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
-                                        append(averageSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
-                                    }
-                                    withStyle(SpanStyle(fontSize = 12.sp)) {
-                                        append(" ${prefManager.speedUnit}\n")
-                                    }
-                                    withStyle(SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
-                                        append(topSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(0).toInt().toString())
-                                    }
-                                    withStyle(SpanStyle(fontSize = 12.sp)) {
-                                        append(" ${prefManager.speedUnit}")
+                                    withStyle(style = ParagraphStyle(lineHeight = 25.sp)) {
+                                        withStyle(
+                                            SpanStyle(
+                                                fontSize = 22.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        ) {
+                                            append(
+                                                averageSpeed.toSpeedUnit(prefManager.speedUnit)
+                                                    .cutForDecimal(0).toInt().toString()
+                                            )
+                                        }
+                                        withStyle(SpanStyle(fontSize = 15.sp)) {
+                                            append(" ${prefManager.speedUnit}\n")
+                                        }
+                                        withStyle(
+                                            SpanStyle(
+                                                fontSize = 22.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        ) {
+                                            append(
+                                                topSpeed.toSpeedUnit(prefManager.speedUnit)
+                                                    .cutForDecimal(0).toInt().toString()
+                                            )
+                                        }
+                                        withStyle(SpanStyle(fontSize = 15.sp)) {
+                                            append(" ${prefManager.speedUnit}")
+                                        }
                                     }
                                 }
                                 Text(
@@ -339,7 +360,7 @@ fun RecordDialog(
                                     textAlign = TextAlign.Center,
                                     text = "표정/최고속도",
                                     fontFamily = lineSeedKr,
-                                    fontSize = 10.sp
+                                    fontSize = 13.sp
                                 )
                                 Text(
                                     modifier = Modifier
@@ -481,7 +502,7 @@ fun RecordDialog(
                 ) {
                     Button(
                         modifier = Modifier
-                            .width(90.dp)
+                            .width(80.dp)
                             .height(45.dp)
                             .border(
                                 width = 1.dp,
@@ -506,7 +527,32 @@ fun RecordDialog(
                     }
                     Button(
                         modifier = Modifier
-                            .width(90.dp)
+                            .width(95.dp)
+                            .height(45.dp)
+                            .border(
+                                width = 1.dp,
+                                color = Color(0xFF888888),
+                                shape = RoundedCornerShape(15.dp)
+                            )
+                            .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                        shape = RoundedCornerShape(15.dp),
+                        onClick = {
+                            showRemoveDialog = true
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Color(0xFF888888),
+                            disabledContainerColor = Color.Gray,
+                            disabledContentColor = Color.LightGray,
+                        )
+                    ) {
+                        Text(
+                            text = "내보내기"
+                        )
+                    }
+                    Button(
+                        modifier = Modifier
+                            .width(80.dp)
                             .height(45.dp)
                             .border(
                                 width = 4.dp,
