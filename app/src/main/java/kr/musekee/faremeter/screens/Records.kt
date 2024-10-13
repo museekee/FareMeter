@@ -16,14 +16,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,12 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kr.musekee.faremeter.R
 import kr.musekee.faremeter.components.RecordDialog
+import kr.musekee.faremeter.components.main.ImportRecordDialog
 import kr.musekee.faremeter.components.main.MainTitle
 import kr.musekee.faremeter.components.main.RecordItem
 import kr.musekee.faremeter.datas.transportations
 import kr.musekee.faremeter.libs.DatabaseHelper
-import kr.musekee.faremeter.libs.DrivingDataDao
-import kr.musekee.faremeter.libs.DrivingData
 import kr.musekee.faremeter.libs.RecordDao
 import kr.musekee.faremeter.libs.RecordData
 import kr.musekee.faremeter.libs.bottomBorder
@@ -56,13 +55,10 @@ import kr.musekee.faremeter.ui.theme.nanumGothic
 @Composable
 fun Records() {
     val scrollState = rememberScrollState()
-    var dialogEnabled by remember { mutableStateOf(false) }
+    var detailDialogEnabled by remember { mutableStateOf(false) }
+    var importDialogEnabled by remember { mutableStateOf(false) }
     var dialogData by remember { mutableStateOf(RecordData("", "서울특별시", "TAXI", 0, 10000, 50.51)) }
-    var drivingData by remember { mutableStateOf(listOf<DrivingData>()) }
-    var topSpeed by remember { mutableDoubleStateOf(0.0) }
-    var averageSpeed by remember { mutableDoubleStateOf(0.0) }
     val recordDao = RecordDao(DatabaseHelper(LocalContext.current))
-    val drivingDataDao = DrivingDataDao(DatabaseHelper(LocalContext.current))
     var isTransportationPopup by remember { mutableStateOf(false) }
     var limit by remember { mutableIntStateOf(0) }
     var transportation: String? by remember { mutableStateOf(null) } // 전체 보기는 null
@@ -72,6 +68,22 @@ fun Records() {
         MainTitle(
             title = stringResource(id = R.string.Results)
         )
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .bottomBorder(1.dp, Color(0xFF777777)),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent
+            ),
+            onClick = {
+                importDialogEnabled = true
+            }
+        ) {
+            Text(
+                color = Color(0xFFBBBBBB),
+                text = "주행 기록 불러오기"
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -176,11 +188,8 @@ fun Records() {
                 RecordItem(index, it.transportation, it.fare, it.distance, it.endTime) {
                     Log.d("endtime", it.endTime.toString())
                     dialogData = it
-                    drivingData = drivingDataDao.getData(it.id)
-                    topSpeed = drivingDataDao.getTopSpeed(it.id)
-                    averageSpeed = drivingDataDao.getAverageSpeed(it.id)
 //                    drivingDataDao.AVGTEST(it.id)
-                    dialogEnabled = true
+                    detailDialogEnabled = true
                 }
             }
         }
@@ -266,13 +275,18 @@ fun Records() {
         }
     }
 
-    if (dialogEnabled) {
+    if (importDialogEnabled) {
+        ImportRecordDialog(
+            onDismiss = {
+                importDialogEnabled = false
+            }
+        )
+    }
+
+    if (detailDialogEnabled) {
         RecordDialog(
-            rData = dialogData,
-            lData = drivingData,
-            topSpeed = topSpeed,
-            averageSpeed = averageSpeed,
-            onDismiss = { dialogEnabled = false },
+            id = dialogData.id,
+            onDismiss = { detailDialogEnabled = false },
             onDeleteButtonClick = {
                 recordDao.deleteData(dialogData.id)
             },

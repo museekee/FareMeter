@@ -95,4 +95,12 @@ class DrivingDataDao(private val dbHelper: DatabaseHelper) {
         }
         cursor.close()
     }
+
+    fun export(id: String): String {
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM DrivingData WHERE ID = ? ORDER BY TIME ASC", arrayOf(id))
+        val sql = DatabaseHelper.exportAsSQL("DrivingData", cursor)
+        cursor.close()
+        return sql
+    }
 }

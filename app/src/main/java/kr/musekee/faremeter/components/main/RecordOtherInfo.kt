@@ -37,7 +37,7 @@ fun RecordOtherInfo(
                 modifier = Modifier
                     .weight(1f),
                 text = annotatedName,
-                fontSize = 15.sp,
+                fontSize = 17.sp,
                 fontFamily = lineSeedKr
             )
         else
@@ -45,7 +45,7 @@ fun RecordOtherInfo(
                 modifier = Modifier
                     .weight(1f),
                 text = name,
-                fontSize = 15.sp,
+                fontSize = 17.sp,
                 fontFamily = lineSeedKr
             )
         Row(
@@ -65,14 +65,14 @@ fun RecordOtherInfo(
             if (annotatedValue != null)
                 Text(
                     text = annotatedValue,
-                    fontSize = 15.sp,
+                    fontSize = 17.sp,
                     fontFamily = lineSeedKr,
                     color = Color(0xFFEEEEEE)
                 )
             else
                 Text(
                     text = value,
-                    fontSize = 15.sp,
+                    fontSize = 17.sp,
                     fontFamily = lineSeedKr,
                     color = Color(0xFFEEEEEE)
                 )

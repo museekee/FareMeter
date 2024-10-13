@@ -1,5 +1,6 @@
 package kr.musekee.faremeter.components
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -54,14 +55,19 @@ import kr.musekee.faremeter.BuildConfig
 import kr.musekee.faremeter.components.main.RecordDialogContainer
 import kr.musekee.faremeter.components.main.RecordOtherInfo
 import kr.musekee.faremeter.components.main.RouteKakaoMap
+import kr.musekee.faremeter.dataPath
 import kr.musekee.faremeter.datas.getTransportationById
+import kr.musekee.faremeter.libs.DatabaseHelper
 import kr.musekee.faremeter.libs.DrivingData
+import kr.musekee.faremeter.libs.DrivingDataDao
 import kr.musekee.faremeter.libs.PrefManager
-import kr.musekee.faremeter.libs.RecordData
+import kr.musekee.faremeter.libs.RecordDao
 import kr.musekee.faremeter.libs.cutForDecimal
 import kr.musekee.faremeter.libs.toSpeedUnit
 import kr.musekee.faremeter.libs.wonFormat
 import kr.musekee.faremeter.ui.theme.lineSeedKr
+import java.io.File
+import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -70,16 +76,20 @@ import java.util.concurrent.TimeUnit
 
 @Composable
 fun RecordDialog(
-    rData: RecordData,
-    lData: List<DrivingData>,
-    topSpeed: Double,
-    averageSpeed: Double,
+    id: String,
     onCloseBtnClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
     val prefManager = PrefManager(context)
+    val dbHelper = DatabaseHelper(context)
+    val recordDao = RecordDao(dbHelper)
+    val drivingDataDao = DrivingDataDao(dbHelper)
+    val rData = recordDao.getAllData().id(id).execute()[0]
+    val lData = drivingDataDao.getData(id)
+    val topSpeed = drivingDataDao.getTopSpeed(id)
+    val averageSpeed = drivingDataDao.getAverageSpeed(id)
 
     Dialog(
         onDismissRequest = {
@@ -401,31 +411,31 @@ fun RecordDialog(
                         withStyle(SpanStyle(fontSize = 12.sp)) {
                             append("${calendar.get(Calendar.YEAR)}년 ")
                         }
-                        withStyle(SpanStyle(fontSize = 15.sp)) {
+                        withStyle(SpanStyle(fontSize = 17.sp)) {
                             append("${calendar.get(Calendar.MONTH)+1}")
                         }
                         withStyle(SpanStyle(fontSize = 12.sp)) {
                             append("월 ")
                         }
-                        withStyle(SpanStyle(fontSize = 15.sp)) {
+                        withStyle(SpanStyle(fontSize = 17.sp)) {
                             append("${calendar.get(Calendar.DAY_OF_MONTH)}")
                         }
                         withStyle(SpanStyle(fontSize = 12.sp)) {
                             append("일\n")
                         }
-                        withStyle(SpanStyle(fontSize = 15.sp)) {
+                        withStyle(SpanStyle(fontSize = 17.sp)) {
                             append("${calendar.get(Calendar.HOUR)}")
                         }
                         withStyle(SpanStyle(fontSize = 12.sp)) {
                             append("시 ")
                         }
-                        withStyle(SpanStyle(fontSize = 15.sp)) {
+                        withStyle(SpanStyle(fontSize = 17.sp)) {
                             append("${calendar.get(Calendar.MINUTE)}")
                         }
                         withStyle(SpanStyle(fontSize = 12.sp)) {
                             append("분 ")
                         }
-                        withStyle(SpanStyle(fontSize = 15.sp)) {
+                        withStyle(SpanStyle(fontSize = 17.sp)) {
                             append("${calendar.get(Calendar.SECOND)}")
                         }
                         withStyle(SpanStyle(fontSize = 12.sp)) {
@@ -441,31 +451,31 @@ fun RecordDialog(
                         withStyle(SpanStyle(fontSize = 12.sp)) {
                             append("${calendar.get(Calendar.YEAR)}년 ")
                         }
-                        withStyle(SpanStyle(fontSize = 15.sp)) {
+                        withStyle(SpanStyle(fontSize = 17.sp)) {
                             append("${calendar.get(Calendar.MONTH)+1}")
                         }
                         withStyle(SpanStyle(fontSize = 12.sp)) {
                             append("월 ")
                         }
-                        withStyle(SpanStyle(fontSize = 15.sp)) {
+                        withStyle(SpanStyle(fontSize = 17.sp)) {
                             append("${calendar.get(Calendar.DAY_OF_MONTH)}")
                         }
                         withStyle(SpanStyle(fontSize = 12.sp)) {
                             append("일\n")
                         }
-                        withStyle(SpanStyle(fontSize = 15.sp)) {
+                        withStyle(SpanStyle(fontSize = 17.sp)) {
                             append("${calendar.get(Calendar.HOUR)}")
                         }
                         withStyle(SpanStyle(fontSize = 12.sp)) {
                             append("시 ")
                         }
-                        withStyle(SpanStyle(fontSize = 15.sp)) {
+                        withStyle(SpanStyle(fontSize = 17.sp)) {
                             append("${calendar.get(Calendar.MINUTE)}")
                         }
                         withStyle(SpanStyle(fontSize = 12.sp)) {
                             append("분 ")
                         }
-                        withStyle(SpanStyle(fontSize = 15.sp)) {
+                        withStyle(SpanStyle(fontSize = 17.sp)) {
                             append("${calendar.get(Calendar.SECOND)}")
                         }
                         withStyle(SpanStyle(fontSize = 12.sp)) {
@@ -537,7 +547,16 @@ fun RecordDialog(
                             .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                         shape = RoundedCornerShape(15.dp),
                         onClick = {
-                            showRemoveDialog = true
+                            Log.d("RecordDialog", dataPath)
+                            val file = File("$dataPath/$id.meter")
+                            if (!file.exists())
+                                file.createNewFile()
+                            val writer = FileWriter(file, false)
+                            writer.write("${recordDao.export(id)}\n")
+                            writer.write(drivingDataDao.export(id))
+                            writer.flush()
+                            writer.close()
+                            Log.d("RecordDialog", "파일 씀")
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,

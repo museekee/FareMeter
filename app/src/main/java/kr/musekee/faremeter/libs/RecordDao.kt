@@ -19,7 +19,7 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
 
     fun deleteData(id: String) {
         val db = dbHelper.readableDatabase
-        db.delete("Records", "ID = ?", listOf(id).toTypedArray())
+        db.delete("Records", "ID = ?", arrayOf(id))
         db.close()
     }
 
@@ -45,6 +45,12 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
         fun limit(limit: Int): DataQueryBuilder {
             this.limit = limit.toString()
             if (limit == 0) this.limit = null
+            return this
+        }
+
+        fun id(id: String): DataQueryBuilder {
+            selection = "ID = ?"
+            selectionArgs = arrayOf(id)
             return this
         }
 
@@ -81,5 +87,13 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
     }
     fun getAllData(): DataQueryBuilder {
         return DataQueryBuilder()
+    }
+
+    fun export(id: String): String {
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Records WHERE id = ?", arrayOf(id))
+        val sql = DatabaseHelper.exportAsSQL("Records", cursor)
+        cursor.close()
+        return sql
     }
 }

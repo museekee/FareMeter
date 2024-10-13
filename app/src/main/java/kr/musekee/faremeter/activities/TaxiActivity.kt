@@ -49,7 +49,6 @@ import kr.musekee.faremeter.components.taxi.TaxiHorse
 import kr.musekee.faremeter.datas.taxi
 import kr.musekee.faremeter.libs.DatabaseHelper
 import kr.musekee.faremeter.libs.GPSStatus
-import kr.musekee.faremeter.libs.DrivingDataDao
 import kr.musekee.faremeter.libs.LocationService
 import kr.musekee.faremeter.libs.MeterUtil
 import kr.musekee.faremeter.libs.PrefManager
@@ -267,17 +266,13 @@ class TaxiActivity : ComponentActivity() {
                 }
                 if (dialogEnabled) {
                     val recordDao = RecordDao(DatabaseHelper(LocalContext.current))
-                    val drivingDataDao = DrivingDataDao(DatabaseHelper(LocalContext.current))
                     val dialogData = recordDao
                         .getAllData()
                         .orderBy("END_TIME", "DESC")
                         .limit(1)
                         .execute()[0]
                     RecordDialog(
-                        rData = dialogData,
-                        lData = drivingDataDao.getData(dialogData.id),
-                        topSpeed = drivingDataDao.getTopSpeed(dialogData.id),
-                        averageSpeed = drivingDataDao.getAverageSpeed(dialogData.id),
+                        id = dialogData.id,
                         onDismiss = { dialogEnabled = false },
                         onDeleteButtonClick = {
                             recordDao.deleteData(dialogData.id)
