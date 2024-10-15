@@ -15,11 +15,11 @@ val properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
-    namespace = "kr.musekee.faremeter"
+    namespace = "kr.museekee.faremeter"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "kr.musekee.faremeter"
+        applicationId = "kr.museekee.faremeter"
         minSdk = 28
         targetSdk = 34
         versionCode = 1
