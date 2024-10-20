@@ -7,6 +7,7 @@ data class RecordData(
     val endTime: Long, // 끝시간
     val fare: Int, // 운임
     val distance: Double, // 거리 m
+    val memo: String = ""
 )
 
 data class DrivingData(

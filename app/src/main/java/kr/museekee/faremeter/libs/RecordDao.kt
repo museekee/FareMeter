@@ -12,9 +12,18 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
             put("END_TIME", data.endTime)
             put("FARE", data.fare)
             put("DISTANCE", data.distance)
+            put("MEMO", data.memo)
         }
 
         return db.insert("Records", null, cv)
+    }
+
+    fun updateMemo(id: String, memo: String) {
+        val db = dbHelper.writableDatabase
+        db.update("Record", ContentValues().apply {
+            put("MEMO", memo)
+        }, "ID = ?", arrayOf(id))
+        db.close()
     }
 
     fun deleteData(id: String) {
@@ -77,7 +86,8 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
                             transportation = it.getString(it.getColumnIndexOrThrow("TRANSPORTATION")),
                             endTime = it.getLong(it.getColumnIndexOrThrow("END_TIME")),
                             fare = it.getInt(it.getColumnIndexOrThrow("FARE")),
-                            distance = it.getDouble(it.getColumnIndexOrThrow("DISTANCE"))
+                            distance = it.getDouble(it.getColumnIndexOrThrow("DISTANCE")),
+                            memo = it.getString(it.getColumnIndexOrThrow("MEMO"))
                         )
                     } while (it.moveToNext())
                 it.close()

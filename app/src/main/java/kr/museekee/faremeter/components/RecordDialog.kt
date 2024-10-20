@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,6 +27,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -102,6 +104,7 @@ fun RecordDialog(
         val transportationColor = transportation.color
         val startTime = Date(lData[0].time)
         val endTime = Date(lData.last().time)
+        var memo by remember { mutableStateOf(rData.memo) }
         var isMapMoving by remember { mutableStateOf(false) }
         var showRemoveDialog by remember { mutableStateOf(false) }
 
@@ -493,6 +496,20 @@ fun RecordDialog(
                             noGPSTimePos.add(Pair(lData[i - 1], lData[i]))
                         }
                     }
+
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(50.dp)
+                            .border(1.dp, Color(0xFF151515), shape = RoundedCornerShape(20.dp)),
+                        value = memo,
+                        placeholder = { Text(text = "메모를 입력해주세요") },
+                        onValueChange = {
+                            Log.d("RecordDialog", "메모 텍스트 필드 변화: $it")
+                            memo = it
+                        }
+                    )
+
                     RouteKakaoMap(
                         modifier = Modifier.onPointerInteractionStartEnd(
                             onPointerStart = {
@@ -582,6 +599,7 @@ fun RecordDialog(
                         shape = RoundedCornerShape(15.dp),
                         onClick = {
                             onCloseBtnClick()
+                            recordDao.updateMemo(rData.id, memo)
                             onDismiss()
                         },
                         colors = ButtonDefaults.buttonColors(
