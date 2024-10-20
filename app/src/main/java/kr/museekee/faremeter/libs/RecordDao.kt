@@ -102,8 +102,11 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
     fun export(id: String): String {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM Records WHERE id = ?", arrayOf(id))
+        cursor.moveToFirst()
+        val memo = cursor.getString(cursor.getColumnIndexOrThrow("MEMO"))
+        val fare = cursor.getInt(cursor.getColumnIndexOrThrow("FARE"))
         val sql = DatabaseHelper.exportAsSQL("Records", cursor)
         cursor.close()
-        return sql
+        return "$memo,$fare\n$sql"
     }
 }
