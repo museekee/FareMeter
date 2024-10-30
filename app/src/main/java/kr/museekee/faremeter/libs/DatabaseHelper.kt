@@ -15,7 +15,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 TRANSPORTATION TEXT,
                 END_TIME INTEGER,
                 FARE INTEGER,
-                DISTANCE REAL
+                DISTANCE REAL,
+                MEMO TEXT
             );
         """.trimIndent()
         sqLiteDatabase.execSQL(sqlRecords)

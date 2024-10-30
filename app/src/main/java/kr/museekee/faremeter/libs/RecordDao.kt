@@ -20,7 +20,7 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
 
     fun updateMemo(id: String, memo: String) {
         val db = dbHelper.writableDatabase
-        db.update("Record", ContentValues().apply {
+        db.update("Records", ContentValues().apply {
             put("MEMO", memo)
         }, "ID = ?", arrayOf(id))
         db.close()
@@ -87,7 +87,10 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
                             endTime = it.getLong(it.getColumnIndexOrThrow("END_TIME")),
                             fare = it.getInt(it.getColumnIndexOrThrow("FARE")),
                             distance = it.getDouble(it.getColumnIndexOrThrow("DISTANCE")),
-                            memo = it.getString(it.getColumnIndexOrThrow("MEMO"))
+                            memo = when (it.getColumnIndex("MEMO")) {
+                                -1 -> ""
+                                else -> it.getString(it.getColumnIndexOrThrow("MEMO"))
+                            }
                         )
                     } while (it.moveToNext())
                 it.close()
@@ -103,7 +106,10 @@ class RecordDao(private val dbHelper: DatabaseHelper) {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM Records WHERE id = ?", arrayOf(id))
         cursor.moveToFirst()
-        val memo = cursor.getString(cursor.getColumnIndexOrThrow("MEMO"))
+        val memo = when (cursor.getColumnIndex("MEMO")) {
+            -1 -> ""
+            else -> cursor.getString(cursor.getColumnIndexOrThrow("MEMO"))
+        }
         val fare = cursor.getInt(cursor.getColumnIndexOrThrow("FARE"))
         val sql = DatabaseHelper.exportAsSQL("Records", cursor)
         cursor.close()
