@@ -75,7 +75,8 @@ fun SelectTransportation() {
                         transportation = taxi.id,
                         endTime = 1726264574667,
                         fare = 195020,
-                        distance = 233670.910437927
+                        distance = 233670.910437927,
+                        memo = "아무메모"
                     ))
                     val dts: List<Pair<Double, Long>> = listOf(
                         Pair(10.0, 1),
