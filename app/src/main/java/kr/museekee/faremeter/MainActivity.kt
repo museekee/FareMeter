@@ -21,7 +21,6 @@ import kr.museekee.faremeter.libs.PrefManager
 import kr.museekee.faremeter.screens.BottomNavigation
 import kr.museekee.faremeter.screens.NavigationHost
 import kr.museekee.faremeter.ui.theme.FareMeterTheme
-import java.io.File
 
 class MainActivity : ComponentActivity() {
 
@@ -29,9 +28,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val dataDir = File(dataPath)
-        if (!dataDir.exists())
-            dataDir.mkdir()
+//        val dataDir = File(dataPath)
+//        if (!dataDir.exists())
+//            dataDir.mkdir()
         val prefManager = PrefManager(this)
         if (prefManager.transportation == unknownTransportation.id)
             prefManager.transportation = taxi.id

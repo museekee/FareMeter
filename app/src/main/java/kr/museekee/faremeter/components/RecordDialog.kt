@@ -52,12 +52,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.kakao.sdk.share.ShareClient
+import com.kakao.sdk.share.rx
+import com.kakao.sdk.template.model.Content
+import com.kakao.sdk.template.model.FeedTemplate
+import com.kakao.sdk.template.model.ItemContent
+import com.kakao.sdk.template.model.ItemInfo
+import com.kakao.sdk.template.model.Link
 import com.kakao.vectormap.KakaoMapSdk
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kr.museekee.faremeter.BuildConfig
+import kr.museekee.faremeter.KAKAO_TEMPLATE_ID
 import kr.museekee.faremeter.components.main.RecordDialogContainer
 import kr.museekee.faremeter.components.main.RecordOtherInfo
 import kr.museekee.faremeter.components.main.RouteKakaoMap
-import kr.museekee.faremeter.dataPath
 import kr.museekee.faremeter.datas.getTransportationById
 import kr.museekee.faremeter.libs.DatabaseHelper
 import kr.museekee.faremeter.libs.DrivingData
@@ -65,11 +76,10 @@ import kr.museekee.faremeter.libs.DrivingDataDao
 import kr.museekee.faremeter.libs.PrefManager
 import kr.museekee.faremeter.libs.RecordDao
 import kr.museekee.faremeter.libs.cutForDecimal
+import kr.museekee.faremeter.libs.makeToast
 import kr.museekee.faremeter.libs.toSpeedUnit
 import kr.museekee.faremeter.libs.wonFormat
 import kr.museekee.faremeter.ui.theme.lineSeedKr
-import java.io.File
-import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -564,16 +574,33 @@ fun RecordDialog(
                             .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                         shape = RoundedCornerShape(15.dp),
                         onClick = {
-                            Log.d("RecordDialog", dataPath)
-                            val file = File("$dataPath/$id.meter")
-                            if (!file.exists())
-                                file.createNewFile()
-                            val writer = FileWriter(file, false)
-                            writer.write("${recordDao.export(id)}\n")
-                            writer.write(drivingDataDao.export(id))
-                            writer.flush()
-                            writer.close()
-                            Log.d("RecordDialog", "파일 씀")
+                            val duration = endTime.time - startTime.time
+
+                            val hours = TimeUnit.MILLISECONDS.toHours(duration)
+                            val minutes = TimeUnit.MILLISECONDS.toMinutes(duration) - TimeUnit.HOURS.toMinutes(hours)
+                            val disposables = CompositeDisposable()
+                            ShareClient.rx.shareCustom(context, KAKAO_TEMPLATE_ID, mapOf(
+                                "FARE" to rData.fare.wonFormat(),
+                                "TRANSPORTATION" to context.getString(getTransportationById(rData.transportation).label),
+                                "TIME" to "${hours}시간 ${minutes}분",
+                                "TOP_SPEED" to "${topSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(1)} ${prefManager.speedUnit}",
+                                "AVERAGE_SPEED" to "${averageSpeed.toSpeedUnit(prefManager.speedUnit).cutForDecimal(1)} ${prefManager.speedUnit}",
+                                "DISTANCE" to "${(rData.distance/1000).cutForDecimal(1)} km",
+                                "CALC_TYPE" to rData.fareCalcType
+                            ))
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ sharingResult ->
+                                    Log.d("RecordDialog", "카톡 공유 성공 ${sharingResult.intent}")
+                                    context.startActivity(sharingResult.intent)
+
+                                    Log.w("RecordDialog", "Warning Msg: ${sharingResult.warningMsg}")
+                                    Log.w("RecordDialog", "Argument Msg: ${sharingResult.argumentMsg}")
+                                }, { error ->
+                                    Log.e("RecordDialog", "카톡 공유 실패", error)
+                                    makeToast(context, "카카오톡이 설치되어있지 않아요.")
+                                })
+                                .addTo(disposables)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
@@ -583,7 +610,7 @@ fun RecordDialog(
                         )
                     ) {
                         Text(
-                            text = "내보내기"
+                            text = "카톡공유"
                         )
                     }
                     Button(

@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
@@ -68,22 +66,22 @@ fun Records() {
         MainTitle(
             title = stringResource(id = R.string.Results)
         )
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .bottomBorder(1.dp, Color(0xFF777777)),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
-            ),
-            onClick = {
-                importDialogEnabled = true
-            }
-        ) {
-            Text(
-                color = Color(0xFFBBBBBB),
-                text = "주행 기록 불러오기"
-            )
-        }
+//        Button(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .bottomBorder(1.dp, Color(0xFF777777)),
+//            colors = ButtonDefaults.buttonColors(
+//                containerColor = Color.Transparent
+//            ),
+//            onClick = {
+//                importDialogEnabled = true
+//            }
+//        ) {
+//            Text(
+//                color = Color(0xFFBBBBBB),
+//                text = "주행 기록 불러오기"
+//            )
+//        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()

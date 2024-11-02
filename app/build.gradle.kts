@@ -35,6 +35,7 @@ android {
 
         buildConfigField("String", "KAKAO_API_KEY", properties["KAKAO_API_KEY"].toString())
         resValue("string", "KAKAO_API_KEY", properties["KAKAO_API_KEY"].toString())
+        resValue("string", "KAKAO_SCHEME", "kakao${properties["KAKAO_API_KEY"]}")
     }
 
     buildTypes {
@@ -83,6 +84,7 @@ dependencies {
     implementation("androidx.preference:preference:1.2.1")
 
     implementation("com.kakao.maps.open:android:2.11.9")
+    implementation("com.kakao.sdk:v2-share-rx:2.20.6")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

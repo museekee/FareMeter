@@ -16,7 +16,7 @@ import kr.museekee.faremeter.transportationCalc.UnknownCalc
  */
 
 val unknownTransportation = Transportation("UNKNOWN", UnknownActivity::class.java, UnknownCalc, R.drawable.ic_taxi, R.string.Unknown, Color(0xFFBBBBBB), listOf())
-val taxi = Transportation("TAXI", TaxiActivity::class.java, TaxiCalc, R.drawable.ic_taxi,R.string.Taxi, Color(0xFFFFDE4D), TaxiData.fareCalcTypes)
+val taxi = Transportation("TAXI", TaxiActivity::class.java, TaxiCalc, R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), TaxiData.fareCalcTypes)
 //val bus = Transportation("BUS", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
 //val subway = Transportation("SUBWAY", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
 //val tram = Transportation("TRAM", R.drawable.ic_taxi, R.string.Taxi, Color(0xFFFFDE4D), listOf())
